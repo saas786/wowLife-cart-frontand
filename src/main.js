@@ -9,6 +9,8 @@ import VueAxios from 'vue-axios'
 
 import VueCookies from 'vue3-cookies'
 
+import VueGoogleMaps from '@fawmi/vue-google-maps'
+
 const app = createApp(App)
 
 app.config.globalProperties.$baseDir = process.env.NODE_ENV === 'development' ? 'https://wanderfull.ru' : 'https://wowlife.club';
@@ -16,5 +18,10 @@ app.config.globalProperties.$baseDir = process.env.NODE_ENV === 'development' ? 
 app.use(VueAxios, axios)
 app.use(VueCookies)
 
-app.mount('#cart-vue')
+app.use(VueGoogleMaps, {
+    load: {
+        key: 'AIzaSyDmneI1xkAU_auXN74RVUKfJ0KnXAQzZq4',
+    },
+}).mount('#cart-vue')
+
 

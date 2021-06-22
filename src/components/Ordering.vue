@@ -27,7 +27,7 @@
       <div class="col-9" v-if="isActiveDeliv && delivery">
         <div>
           1.Адрес доставки<br />
-          <input type="text" />
+          <YandexMap/>
         </div>
         <div>
           2.Время доставки<br />
@@ -119,8 +119,13 @@
   </div>
 </template>
 <script>
+import YandexMap from '../components/YandexMap.vue'
+
 export default {
   name: "Ordering",
+components:{
+    YandexMap
+  },
   props: {
     delivery: Boolean,
     pickup: Boolean,
@@ -168,6 +173,7 @@ export default {
     },
   },
 };
+
 </script>
 <style>
 </style>

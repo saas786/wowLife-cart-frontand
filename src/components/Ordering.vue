@@ -27,6 +27,7 @@
       <div class="col-9" v-if="isActiveDeliv && delivery">
         <div>
           1.Адрес доставки<br />
+          <input id="regionDelivery" type="hidden">
           <YandexMap/>
         </div>
         <div>

@@ -20,6 +20,7 @@ app.use(VueCookies)
 
 app.use(VueGoogleMaps, {
     load: {
+        libraries: ['places'],
         key: 'AIzaSyDmneI1xkAU_auXN74RVUKfJ0KnXAQzZq4',
     },
 }).mount('#cart-vue')

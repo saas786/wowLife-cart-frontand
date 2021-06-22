@@ -1,5 +1,5 @@
 <template>
-  <input id="addressInput" type="text" />
+  <input id="addressInput" type="text" v-on:blur="handleBlur($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
   <GMapMap
     :center="center"
     :zoom="9"
@@ -13,7 +13,7 @@
         v-for="(m, index) in marker"
         :position="m.position"
         :clickable="true"
-        :draggable="true"
+        :draggable="false"
         @click="center = m.position"
       />
     </GMapCluster>
@@ -34,6 +34,7 @@ export default {
           },
         },
       ],
+      deliverySPb: null,
       paths: [
         { lat: 60.058895218404, lng: 30.145536396425484 },
         { lat: 60.03901197481374, lng: 30.15514943353486 },
@@ -57,6 +58,7 @@ export default {
         { lat: 60.09657193722919, lng: 30.38036916009736 },
         { lat: 60.102048601740016, lng: 30.25677296869111 },
       ],
+      deliveryObl: null,
       pathsObl: [
         { lat: 59.983627236219185, lng: 30.200326199173276 },
         { lat: 60.03030928569356, lng: 30.082223171829526 },
@@ -76,6 +78,7 @@ export default {
         { lat: 59.88317531781153, lng: 30.172860378860776 },
         { lat: 59.90934962847772, lng: 30.208565945267026 },
       ],
+      deliveryKolpino: null,
       pathsKolpino: [
         { lat: 59.76663867269137, lng: 30.601860583076473 },
         { lat: 59.76093344445086, lng: 30.56272178913116 },
@@ -89,7 +92,7 @@ export default {
   },
   mounted() {
     this.$refs.myMapRef.$mapPromise.then((map) => {
-      var deliverySPb = new window.google.maps.Polygon({
+      this.deliverySPb = new window.google.maps.Polygon({
         paths: this.paths,
         strokeColor: "#00ab15",
         strokeOpacity: 0.9,
@@ -97,9 +100,9 @@ export default {
         fillColor: "#00ab15",
         fillOpacity: 0.35,
       });
-      deliverySPb.setMap(map);
+      this.deliverySPb.setMap(map);
 
-      const deliveryObl = new window.google.maps.Polygon({
+      this.deliveryObl = new window.google.maps.Polygon({
         paths: [this.paths, this.pathsObl],
         strokeColor: "#fbff00",
         strokeOpacity: 0.9,
@@ -107,9 +110,9 @@ export default {
         fillColor: "#fbff00",
         fillOpacity: 0.35,
       });
-      deliveryObl.setMap(map);
+      this.deliveryObl.setMap(map);
 
-      const deliveryKolpino = new window.google.maps.Polygon({
+      this.deliveryKolpino = new window.google.maps.Polygon({
         paths: this.pathsKolpino,
         strokeColor: "#fbff00",
         strokeOpacity: 0.9,
@@ -117,14 +120,25 @@ export default {
         fillColor: "#fbff00",
         fillOpacity: 0.35,
       });
-      deliveryKolpino.setMap(map);
+      this.deliveryKolpino.setMap(map);
 
       const geocoder = new window.google.maps.Geocoder();
       const infowindow = new window.google.maps.InfoWindow();
-      deliverySPb.addListener("click", (mapsMouseEvent) => {
+      this.deliverySPb.addListener("click", (mapsMouseEvent) => {
+        document.getElementById("regionDelivery").value = 'spb'
         this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
       });
-    });
+
+      this.deliveryObl.addListener("click", (mapsMouseEvent) => {
+        document.getElementById("regionDelivery").value = 'obl'
+        this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
+      });
+
+      this.deliveryKolpino.addListener("click", (mapsMouseEvent) => {
+        document.getElementById("regionDelivery").value = 'obl'
+        this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
+      });
+    })
   },
   methods: {
     geocodeLatLng(map, geocoder, infowindow, coord) {
@@ -147,7 +161,34 @@ export default {
           window.alert("Geocoder failed due to: " + status);
         }
       });
-    }
+    },
+    onEnter(event){
+        event.blur();
+    },
+    handleBlur(event) {
+        let address = event.value
+        this.$refs.myMapRef.$mapPromise.then(() => {
+            let geocoderAddress = new window.google.maps.Geocoder();
+
+            geocoderAddress.geocode({ address: address }, (results, status) => {
+                if (status === "OK") {
+                    this.marker[0].position.lat = results[0].geometry.location.lat();
+                    this.marker[0].position.lng = results[0].geometry.location.lng();
+                    if (window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliverySPb)) {
+                        document.getElementById("regionDelivery").value = 'spb'
+                    } else if(window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliveryObl)) {
+                        document.getElementById("regionDelivery").value = 'obl'
+                    } else if(window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliveryKolpino)) {
+                        document.getElementById("regionDelivery").value = 'obl'
+                    } else {
+                        document.getElementById("regionDelivery").value = 'null'
+                    }
+                } else {
+                    alert("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        })
+    }   
   },
 };
 </script>

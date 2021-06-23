@@ -87,28 +87,30 @@ export default {
       isActiveElectr: false,
       isOrdering: false,
       pickup: false,
-      sessionId: ''
     }
   },
   mounted(){
-    let customerKey = ''
-    let cookieArr = this.$cookies.keys()
+    let cookie = this.$cookies
+    let sessionIds = []
+    let cookieArr = cookie.keys()
     cookieArr.forEach(function(item) {
       if(item.includes('sid_customer')){
-        customerKey = item;
+        console.log(item);
+        sessionIds.push(cookie.get(item))
       }
     });
-    this.sessionId = this.$cookies.get(customerKey)
 
     let params = {
       params: {
         entity: 'carts',
-        sessionId: this.sessionId
+        sessionId: sessionIds
       }
     }; 
+    
     this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
       this.products = response.data
     })
+
   },
   methods: {
     selSert(typeSert){

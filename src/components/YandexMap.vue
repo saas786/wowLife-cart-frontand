@@ -125,17 +125,17 @@ export default {
       const geocoder = new window.google.maps.Geocoder();
       const infowindow = new window.google.maps.InfoWindow();
       this.deliverySPb.addListener("click", (mapsMouseEvent) => {
-        document.getElementById("regionDelivery").value = 'spb'
+        this.$root.orderData.delivery = 'spb'
         this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
       });
 
       this.deliveryObl.addListener("click", (mapsMouseEvent) => {
-        document.getElementById("regionDelivery").value = 'obl'
+        this.$root.orderData.delivery = 'obl'
         this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
       });
 
       this.deliveryKolpino.addListener("click", (mapsMouseEvent) => {
-        document.getElementById("regionDelivery").value = 'obl'
+        this.$root.orderData.delivery = 'obl'
         this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
       });
     })
@@ -175,13 +175,13 @@ export default {
                     this.marker[0].position.lat = results[0].geometry.location.lat();
                     this.marker[0].position.lng = results[0].geometry.location.lng();
                     if (window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliverySPb)) {
-                        document.getElementById("regionDelivery").value = 'spb'
+                        this.$root.orderData.delivery = 'spb'
                     } else if(window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliveryObl)) {
-                        document.getElementById("regionDelivery").value = 'obl'
+                        this.$root.orderData.delivery = 'obl'
                     } else if(window.google.maps.geometry.poly.containsLocation(results[0].geometry.location, this.deliveryKolpino)) {
-                        document.getElementById("regionDelivery").value = 'obl'
+                        this.$root.orderData.delivery = 'obl'
                     } else {
-                        document.getElementById("regionDelivery").value = 'null'
+                        this.$root.orderData.delivery = 'null'
                     }
                 } else {
                     alert("Geocode was not successful for the following reason: " + status);

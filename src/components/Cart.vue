@@ -1,21 +1,21 @@
 <template>
   <div class="container cart" v-if="isOrdering === false">
-    <div  v-if="products != ''">
+    <div  v-if="$root.orderData.products">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a class="nav-link" 
             aria-current="page" 
             href="#"
-            v-on:click="selSert('fiz')"
-            :class="{ active: isActiveFiz}">
+            v-on:click="$root.orderData.type_order = 'fiz'"
+            :class="[$root.orderData.type_order == 'fiz' ? 'active' : '' ]">
             Физический
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" 
             href="#" 
-            v-on:click="selSert('electr')"
-            :class="{ active: isActiveElectr}">
+            v-on:click="$root.orderData.type_order = 'electr'"
+            :class="[$root.orderData.type_order != 'fiz' ? 'active' : '' ]">
             Электронный
           </a>
         </li>
@@ -31,12 +31,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in products" :key="item.product_id">
-            <th scope="row">{{index + 1}}</th>
-            <td> {{item.extra['product_id']}}</td>
-            <td> {{item.extra['product']}}</td>
-            <td>{{item.extra['price']}}</td>
-            <td style="text-align: right"><a href="#" v-on:click="delFromCart(item.extra['product_id'])">Удалить</a></td>
+          <tr v-for="(item) in $root.orderData.products" :key="item.product_id">
+            <th scope="row">#</th>
+            <td> {{item['product_id']}}</td>
+            <td> {{item['title']}}</td>
+            <td>{{item['price']}}</td>
+            <td style="text-align: right"><a href="#" v-on:click="delFromCart(item['product_id'])">Удалить</a></td>
           </tr>
         </tbody>
       </table>
@@ -45,21 +45,23 @@
           <div class="d-flex justify-content-start">
             <div>
               <h6>Дополнительные услуги</h6>
-              <ul v-if="isActiveFiz">
-                <li>Цветы</li>
-                <li>Рафаэло</li>
-                <li>Цветы 1</li>
-                <li>Цветы 23</li>
-                <li>Цветы 4</li>
-              </ul>
+              <div v-if="$root.orderData.type_order == 'fiz' && productsAdd">
+                <p v-for="item in productsAdd" :key="item.product_id">
+                  <input data-id="{{item.product_id}}" type="checkbox" name="prAdd" value="{{item.price}}">{{item.title}} {{item.price}}
+                </p>
+              </div>
             </div>
           </div>
         </div>
         <div class="col">
           <div class="d-flex justify-content-end">
             <div>
-              <p v-if="isActiveFiz"><input name="dostavka" type="radio" value="1" v-on:click="pickup=false" checked> Доставка</p>
-              <p v-if="isActiveFiz"><input name="dostavka" type="radio" value="2" v-on:click="pickup=true"> Самовывоз</p>
+              <p v-if="$root.orderData.type_order == 'fiz'">
+                <input name="dostavka" type="radio" value="1" v-on:click="$root.orderData.delivery = null" checked> Доставка
+              </p>
+              <p v-if="$root.orderData.type_order == 'fiz'">
+                <input name="dostavka" type="radio" value="2" v-on:click="$root.orderData.delivery = 'pickup'"> Самовывоз
+              </p>
               <button v-on:click="isOrdering = true">Оформить</button>
             </div>
           </div>
@@ -70,7 +72,7 @@
       <h2 style='text-align: center'>В корзине нет товаров</h2>
     </div>
   </div>
-  <Ordering :delivery="isActiveFiz" :pickup="pickup" v-else/>
+  <Ordering v-else/>
 </template>
 <script>
 import Ordering from '../components/Ordering.vue'
@@ -82,11 +84,8 @@ export default {
   },
   data() {
     return {
-      products: null,
-      isActiveFiz: true,
-      isActiveElectr: false,
+      productsAdd: null,
       isOrdering: false,
-      pickup: false,
     }
   },
   mounted(){
@@ -95,7 +94,6 @@ export default {
     let cookieArr = cookie.keys()
     cookieArr.forEach(function(item) {
       if(item.includes('sid_customer')){
-        console.log(item);
         sessionIds.push(cookie.get(item))
       }
     });
@@ -108,20 +106,30 @@ export default {
     }; 
     
     this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-      this.products = response.data
+      if(response.data){
+        response.data.forEach(item => {
+          this.$root.orderData.products[item['product_id']] = {
+            product_id: item['product_id'],
+            title: item.extra['product'],
+            amount: item['amount'],
+            price: item['price']
+          }
+        })
+      } 
+    })
+
+    params = {
+      params: {
+        entity: 'additional',
+      }
+    }; 
+    
+    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      this.productsAdd = response.data
     })
 
   },
   methods: {
-    selSert(typeSert){
-      if(typeSert == 'fiz'){
-        this.isActiveFiz = true;
-        this.isActiveElectr = false;
-      } else {
-        this.isActiveFiz = false;
-        this.isActiveElectr = true;
-      }
-    },
     delFromCart(product_id){
       
       let params = {

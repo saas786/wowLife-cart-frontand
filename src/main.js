@@ -24,5 +24,3 @@ app.use(VueGoogleMaps, {
         key: 'AIzaSyDmneI1xkAU_auXN74RVUKfJ0KnXAQzZq4',
     },
 }).mount('#cart-vue')
-
-

@@ -7,7 +7,7 @@
           aria-current="page"
           href="#"
           v-on:click="$root.orderData.delivery = null"
-          :class="[$root.orderData.delivery != 'pickup' ? 'active' : '']"
+          :class="[$root.orderData.delivery != this.delivery[0]['id'] ? 'active' : '']"
         >
           Доставка
         </a>
@@ -16,18 +16,18 @@
         <a
           class="nav-link"
           href="#"
-          v-on:click="$root.orderData.delivery = 'pickup'"
-          :class="[$root.orderData.delivery == 'pickup' ? 'active' : '']"
+          v-on:click="$root.orderData.delivery = this.delivery[0]['id']"
+          :class="[$root.orderData.delivery == this.delivery[0]['id'] ? 'active' : '']"
         >
           Самовывоз
         </a>
       </li>
     </ul>
-    <div class="row">
-      <div class="col-9" v-if="$root.orderData.type_order != 'electr' && $root.orderData.delivery != 'pickup'">
+    <div class="row" >
+      <div class="col-9" v-if="$root.orderData.type_order != 'electr' && $root.orderData.delivery != this.delivery[0]['id']">
         <div>
           1.Адрес доставки<br />
-          <YandexMap/>
+          <YandexMap :delivery="delivery"/>
         </div>
         <div>
           2.Время доставки<br />
@@ -58,7 +58,7 @@
         </div>
       </div>
 
-      <div class="col-9" v-if="$root.orderData.delivery == 'pickup'">
+      <div class="col-9" v-if="$root.orderData.delivery == this.delivery[0]['id']">
         <div>
           1.Адрес самовывоза<br />
           <p><input name="address" type="radio" value="1" /> СПб</p>
@@ -120,6 +120,7 @@
 </template>
 <script>
 import YandexMap from '../components/YandexMap.vue'
+import delivery from '@/assets/delivery/deleverySPb.json'
 
 export default {
 name: "Ordering",
@@ -128,11 +129,13 @@ components:{
   },
   data() {
     return {
-
+        delivery: delivery
     };
   },
   mounted() {
-
+      if(this.$root.orderData.delivery == 'pickup'){
+          this.$root.orderData.delivery = this.delivery[0]['id']
+      }
   },
   methods: {
     ordering() {

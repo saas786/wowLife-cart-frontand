@@ -1,6 +1,7 @@
 <template>
   <input
     id="addressInput"
+    name = "b_address"
     type="text"
     v-on:blur="getMarker($event.target)"
     v-on:keyup.enter="onEnter($event.target)"
@@ -58,12 +59,14 @@ export default {
             strokeWeight: item.strokeWeight,
             fillColor: item.fillColor,
             fillOpacity: item.fillOpacity,
-            deliveryId: item.id
+            deliveryId: item.id,
+            deliveryPrice: item.price
           });
           this.deliveryZone[item.zone].setMap(map)
 
           this.deliveryZone[item.zone].addListener("click", (mapsMouseEvent) => {
             this.$root.orderData.delivery = item.id;
+            this.$root.orderData.priceDelivery = item.price;
             this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
           });
         }
@@ -97,6 +100,8 @@ export default {
     },
     getMarker(event) {
       let address = event.value;
+      this.$root.orderData.user_data[event.name] = event.value
+
       this.$refs.myMapRef.$mapPromise.then(() => {
         let geocoderAddress = new window.google.maps.Geocoder();
 
@@ -106,6 +111,7 @@ export default {
             this.marker[0].position.lng = results[0].geometry.location.lng();
 
             this.$root.orderData.delivery = "null";
+            this.$root.orderData.priceDelivery = 0;
 
             for(let key in this.deliveryZone){
               if (
@@ -115,14 +121,14 @@ export default {
                 )
               ) {
                 this.$root.orderData.delivery = this.deliveryZone[key].deliveryId;
+                this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice;
               }
             }
           } else {
-            alert(
-              "Geocode was not successful for the following reason: " + status
-            );
+            //alert("Geocode was not successful for the following reason: " + status);
+            alert("Адрес не входит в зону доставки")
           }
-        });
+        })
       });
     },
   },

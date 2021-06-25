@@ -21,9 +21,34 @@ export default {
     this.orderData = {
       user_id: 0,
       products: {},
-      user_data: {},
+      productsAdd: {},
+      user_data: {
+        email: "",
+        b_firstname: "",
+        b_lastname: "",
+        b_address: "",
+        b_city: "",
+        b_state: "",
+        b_country: "RU",
+        b_zipcode: "",
+        b_phone: "",
+        s_email: "",
+        s_firstname: "",
+        s_lastname: "",
+        s_address: "",
+        s_city: "",
+        s_state: "",
+        s_country: "",
+        s_zipcode: "",
+        s_phone: "",
+        delivery_time: "",
+        comment: ""
+      },
       type_order: 'fiz',
-      delivery: null
+      payment:{},
+      paymentSel: 0,
+      delivery: null,
+      priceDelivery: 0
     }
     let cookie = this.$cookies
     let sessionIds = []
@@ -49,6 +74,41 @@ export default {
             title: item.extra['product'],
             amount: item['amount'],
             price: item['price']
+          }
+        })
+      }
+    })
+
+    params = {
+      params: {
+        entity: 'additional',
+      }
+    }; 
+    
+    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      if(response.data){
+        response.data.forEach(item => {
+          this.$root.orderData.productsAdd[item['id']] = {
+            id: item['id'],
+            title: item['title'],
+            price: item['price'],
+            checked: "N"
+          }
+        })
+      }
+    })
+    
+    params = {
+      params: {
+        entity: 'payment',
+      }
+    }; 
+    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      if(response.data){
+        response.data.forEach(item => {
+          this.$root.orderData.payment[item['payment_id']] = {
+            id: item['payment_id'],
+            title: item['payment'],
           }
         })
       }

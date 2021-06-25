@@ -1,6 +1,6 @@
 <template>
   <div class="container cart" v-if="isOrdering === false">
-    <div  v-if="$root.orderData.products">
+    <div  v-if="Object.keys($root.orderData.products).length != 0">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a class="nav-link" 
@@ -45,9 +45,9 @@
           <div class="d-flex justify-content-start">
             <div>
               <h6>Дополнительные услуги</h6>
-              <div v-if="$root.orderData.type_order == 'fiz' && productsAdd">
-                <p v-for="item in productsAdd" :key="item.product_id">
-                  <input data-id="{{item.product_id}}" type="checkbox" name="prAdd" value="{{item.price}}">{{item.title}} {{item.price}}
+              <div v-if="$root.orderData.type_order == 'fiz' && Object.keys($root.orderData.productsAdd).length != 0">
+                <p v-for="item in $root.orderData.productsAdd" :key="item.id">
+                  <input type="checkbox" :value="item.id" v-on:click="checkAdditional($event.target)">{{item.title}} {{item.price}}
                 </p>
               </div>
             </div>
@@ -84,20 +84,10 @@ export default {
   },
   data() {
     return {
-      productsAdd: null,
       isOrdering: false,
     }
   },
   mounted(){
-    let params = {
-      params: {
-        entity: 'additional',
-      }
-    }; 
-    
-    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-      this.productsAdd = response.data
-    })
 
   },
   methods: {
@@ -113,6 +103,13 @@ export default {
       this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
         console.log(response);
       })
+    },
+    checkAdditional(event){
+      if(event.checked === true){
+        this.$root.orderData.productsAdd[event.value]['checked'] = 'Y'
+      } else {
+        this.$root.orderData.productsAdd[event.value]['checked'] = 'N'
+      }
     }
   }
 }

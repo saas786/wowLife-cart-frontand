@@ -208,21 +208,17 @@ export default {
   },
   methods: {
     ordering() {
-      //не забыть pickup в id
-      // if (this.$root.orderData.delivery == "pickup") {
-      //   this.$root.orderData.delivery = this.delivery[0]["id"];
-      // }
+      let dataSend = this.$root.orderData;
+      if (dataSend.delivery == 'pickup'){
+        dataSend.delivery = this.delivery[0].id
+      }
+      dataSend['payment_id'] = dataSend.paymentSel
+      dataSend['shipping_id'] = dataSend.delivery
+
       let data = {
         params: {
           entity: "ordering",
-          data: {
-            products: {
-              241: {
-                amount: 1,
-              },
-            },
-            user_id: 0,
-          },
+          data: dataSend
         },
       };
       this.axios

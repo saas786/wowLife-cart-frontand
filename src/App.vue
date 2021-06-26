@@ -34,7 +34,7 @@ export default {
     }; 
     
     this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-      if(Object.keys(response.data).length != 0){
+      if(response.data){
         console.log('DB'); 
         this.orderData = response.data
         this.loadProducts()

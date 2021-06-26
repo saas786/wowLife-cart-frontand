@@ -12,7 +12,7 @@
     },
     {
         "id": 14,
-        "type": "spb",
+        "type": "SPE",
         "zone": "spb",
         "price": 300,
         "paths": [
@@ -46,7 +46,7 @@
     },
     {
         "id": 17,
-        "type": "obl",
+        "type": "LEN",
         "zone": "10km",
         "price": 500,
         "paths": [
@@ -101,7 +101,7 @@
     },
     {
         "id": 17,
-        "type": "obl",
+        "type": "LEN",
         "zone": "kolpino",
         "price": 500,
         "paths": [

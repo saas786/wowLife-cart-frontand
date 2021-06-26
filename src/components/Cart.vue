@@ -1,6 +1,6 @@
 <template>
   <div class="container cart" v-if="isOrdering === false">
-    <div v-if="Object.keys($root.orderData.products).length != 0">
+    <div v-if="$root.orderData.products">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a
@@ -124,10 +124,13 @@ export default {
   mounted() {},
   methods: {
     delFromCart(product_id) {
+      console.log(this.$root.orderData.products[product_id])
+      delete this.$root.orderData.products[product_id]
+
       let params = {
         params: {
           entity: "delete",
-          sessionId: this.sessionId,
+          sessionId: this.$root.sessionIds,
           product_id: product_id,
         },
       };

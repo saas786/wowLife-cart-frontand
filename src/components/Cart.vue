@@ -1,21 +1,25 @@
 <template>
   <div class="container cart" v-if="isOrdering === false">
-    <div  v-if="Object.keys($root.orderData.products).length != 0">
+    <div v-if="Object.keys($root.orderData.products).length != 0">
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link" 
-            aria-current="page" 
+          <a
+            class="nav-link"
+            aria-current="page"
             href="#"
             v-on:click="$root.orderData.type_order = 'fiz'"
-            :class="[$root.orderData.type_order == 'fiz' ? 'active' : '' ]">
+            :class="[$root.orderData.type_order == 'fiz' ? 'active' : '']"
+          >
             Физический
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" 
-            href="#" 
+          <a
+            class="nav-link"
+            href="#"
             v-on:click="$root.orderData.type_order = 'electr'"
-            :class="[$root.orderData.type_order != 'fiz' ? 'active' : '' ]">
+            :class="[$root.orderData.type_order != 'fiz' ? 'active' : '']"
+          >
             Электронный
           </a>
         </li>
@@ -31,12 +35,16 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item) in $root.orderData.products" :key="item.product_id">
+          <tr v-for="item in $root.orderData.products" :key="item.product_id">
             <th scope="row">#</th>
-            <td> {{item['product_id']}}</td>
-            <td> {{item['title']}}</td>
-            <td>{{item['price']}}</td>
-            <td style="text-align: right"><a href="#" v-on:click="delFromCart(item['product_id'])">Удалить</a></td>
+            <td>{{ item["product_id"] }}</td>
+            <td>{{ item["title"] }}</td>
+            <td>{{ item["price"] }}</td>
+            <td style="text-align: right">
+              <a href="#" v-on:click="delFromCart(item['product_id'])"
+                >Удалить</a
+              >
+            </td>
           </tr>
         </tbody>
       </table>
@@ -45,9 +53,21 @@
           <div class="d-flex justify-content-start">
             <div>
               <h6>Дополнительные услуги</h6>
-              <div v-if="$root.orderData.type_order == 'fiz' && Object.keys($root.orderData.productsAdd).length != 0">
+              <div
+                v-if="
+                  $root.orderData.type_order == 'fiz' &&
+                  Object.keys($root.orderData.productsAdd).length != 0
+                "
+              >
                 <p v-for="item in $root.orderData.productsAdd" :key="item.id">
-                  <input type="checkbox" :value="item.id" v-on:click="checkAdditional($event.target)">{{item.title}} {{item.price}}
+                  <input
+                    type="checkbox"
+                    :value="item.id"
+                    v-on:click="checkAdditional($event.target)"
+                    :checked="item.checked == 'Y' ? true : false"
+                  />
+
+                  {{ item.title }} {{ item.price }}
                 </p>
               </div>
             </div>
@@ -57,10 +77,24 @@
           <div class="d-flex justify-content-end">
             <div>
               <p v-if="$root.orderData.type_order == 'fiz'">
-                <input name="dostavka" type="radio" value="1" v-on:click="$root.orderData.delivery = null" checked> Доставка
+                <input
+                  name="dostavka"
+                  type="radio"
+                  value="1"
+                  v-on:click="$root.orderData.delivery = null"
+                  :checked="$root.orderData.delivery != 'pickup' ? true : false"
+                />
+                Доставка
               </p>
               <p v-if="$root.orderData.type_order == 'fiz'">
-                <input name="dostavka" type="radio" value="2" v-on:click="$root.orderData.delivery = 'pickup'"> Самовывоз
+                <input
+                  name="dostavka"
+                  type="radio"
+                  value="2"
+                  v-on:click="$root.orderData.delivery = 'pickup'"
+                  :checked="$root.orderData.delivery == 'pickup' ? true : false"
+                />
+                Самовывоз
               </p>
               <button v-on:click="isOrdering = true">Оформить</button>
             </div>
@@ -69,53 +103,51 @@
       </div>
     </div>
     <div class="container" v-else>
-      <h2 style='text-align: center'>В корзине нет товаров</h2>
+      <h2 style="text-align: center">В корзине нет товаров</h2>
     </div>
   </div>
-  <Ordering v-else/>
+  <Ordering v-else />
 </template>
 <script>
-import Ordering from '../components/Ordering.vue'
+import Ordering from "../components/Ordering.vue";
 
 export default {
-  name: 'Cart',
-  components:{
-    Ordering
+  name: "Cart",
+  components: {
+    Ordering,
   },
   data() {
     return {
       isOrdering: false,
-    }
+    };
   },
-  mounted(){
-
-  },
+  mounted() {},
   methods: {
-    delFromCart(product_id){
-      
+    delFromCart(product_id) {
       let params = {
         params: {
-          entity: 'delete',
+          entity: "delete",
           sessionId: this.sessionId,
-          product_id: product_id
-        }
-      }; 
-      this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-        console.log(response);
-      })
+          product_id: product_id,
+        },
+      };
+      this.axios
+        .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
+        .then((response) => {
+          console.log(response);
+        });
     },
-    checkAdditional(event){
-      if(event.checked === true){
-        this.$root.orderData.productsAdd[event.value]['checked'] = 'Y'
+    checkAdditional(event) {
+      if (event.checked === true) {
+        this.$root.orderData.productsAdd[event.value]["checked"] = "Y";
       } else {
-        this.$root.orderData.productsAdd[event.value]['checked'] = 'N'
+        this.$root.orderData.productsAdd[event.value]["checked"] = "N";
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 </style>

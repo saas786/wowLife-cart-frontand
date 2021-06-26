@@ -3,6 +3,7 @@
     id="addressInput"
     name = "b_address"
     type="text"
+    :value='$root.orderData.user_data.b_address'
     v-on:blur="getMarker($event.target)"
     v-on:keyup.enter="onEnter($event.target)"
   />
@@ -46,6 +47,9 @@ export default {
     };
   },
   mounted() {
+    if(document.getElementById("addressInput").value != ''){
+      this.getMarker(document.getElementById("addressInput"))
+    }
     this.$refs.myMapRef.$mapPromise.then((map) => {
       const geocoder = new window.google.maps.Geocoder();
       const infowindow = new window.google.maps.InfoWindow();

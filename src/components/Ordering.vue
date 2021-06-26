@@ -10,7 +10,7 @@
             $root.orderData.delivery = null;
           "
           :class="[
-            $root.orderData.delivery != this.delivery[0]['id'] ? 'active' : '',
+            $root.orderData.delivery != 'pickup' ? 'active' : '',
           ]"
         >
           Доставка
@@ -21,11 +21,11 @@
           class="nav-link"
           href="#"
           v-on:click="
-            $root.orderData.delivery = this.delivery[0]['id'];
+            $root.orderData.delivery = 'pickup';
             $root.orderData.priceDelivery = 0;
           "
           :class="[
-            $root.orderData.delivery == this.delivery[0]['id'] ? 'active' : '',
+            $root.orderData.delivery == 'pickup' ? 'active' : '',
           ]"
         >
           Самовывоз
@@ -37,7 +37,6 @@
         class="col-9"
         v-if="
           $root.orderData.type_order != 'electr' &&
-          $root.orderData.delivery != this.delivery[0]['id'] &&
           $root.orderData.delivery != 'pickup'
         "
       >
@@ -47,7 +46,7 @@
         </div>
         <div>
           2.Время доставки<br />
-          <input name="delivery_time" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+          <input name="delivery_time" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.delivery_time"/>
         </div>
         <div>
           3.Способ оплаты<br />
@@ -63,16 +62,16 @@
         </div>
         <div>
           4.Электронная почта<br />
-          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.email"/>
         </div>
         <div>
           5.Телефон<br />
-          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
-          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/> Имя
+          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_phone"/>
+          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_firstname"/> Имя
         </div>
         <div>
           6.Комментарий<br />
-          <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+          <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.comment"/>
         </div>
         <div>
           Сумма заказа: 5000<br />
@@ -82,7 +81,7 @@
 
       <div
         class="col-9"
-        v-if="$root.orderData.delivery == this.delivery[0]['id']"
+        v-if="$root.orderData.type_order != 'electr' && $root.orderData.delivery == 'pickup'"
       >
         <div>
           1.Адрес самовывоза<br />
@@ -120,16 +119,16 @@
         </div>
         <div>
           3.Электронная почта<br />
-          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.email"/>
         </div>
         <div>
           4.Телефон<br />
-          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
-          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/> Имя
+          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_phone"/>
+          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_firstname"/> Имя
         </div>
         <div>
           5.Комментарий<br />
-          <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+          <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.comment"/>
         </div>
         <div>
           Сумма заказа: 5000<br />
@@ -153,17 +152,17 @@
         </div>
         <div>
           2.Электронная почта<br />
-          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" /> Ваша почта 
-          <input name="s_email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" /> почта получателя
+          <input name="email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.email"/> Ваша почта 
+          <input name="s_email" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.s_email"/> почта получателя
         </div>
         <div>
           3.Телефон<br />
-          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
-          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/> Имя
+          <input name="b_phone" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_phone"/>
+          <input name="b_firstname" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.b_firstname"/> Имя
         </div>
         <div>
           4.Комментарий<br />
-         <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)"/>
+         <input name="comment" type="text" v-on:blur="setData($event.target)" v-on:keyup.enter="onEnter($event.target)" :value="$root.orderData.user_data.comment"/>
         </div>
         <div>
           Сумма заказа: 5000<br />
@@ -200,9 +199,7 @@ export default {
     };
   },
   mounted() {
-    if (this.$root.orderData.delivery == "pickup") {
-      this.$root.orderData.delivery = this.delivery[0]["id"];
-    }
+
     if (this.$root.orderData.type_order == 'electr'){
       this.payments("card")
     } else {
@@ -211,6 +208,10 @@ export default {
   },
   methods: {
     ordering() {
+      //не забыть pickup в id
+      // if (this.$root.orderData.delivery == "pickup") {
+      //   this.$root.orderData.delivery = this.delivery[0]["id"];
+      // }
       let data = {
         params: {
           entity: "ordering",

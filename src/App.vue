@@ -35,10 +35,18 @@ export default {
     
     this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
       if(response.data){
-        console.log('DB'); 
-        this.orderData = response.data
-        this.loadProducts()
-        this.loadPayments()
+        if(Object.keys(response.data).length != 0){
+          console.log('DB'); 
+          this.orderData = response.data
+          this.loadProducts()
+          this.loadPayments()
+        } else {
+          console.log('init')
+          this.init_orderData()
+          this.loadProducts()
+          this.loadProductsAdd()
+          this.loadPayments()
+        }
       } else {
         console.log('init')
         this.init_orderData()

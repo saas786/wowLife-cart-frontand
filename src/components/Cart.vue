@@ -1,6 +1,6 @@
 <template>
   <div class="container cart" v-if="isOrdering === false">
-    <div v-if="$root.orderData.products">
+    <div v-if="Object.keys($root.orderData.products).length != 0">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a

@@ -30,6 +30,7 @@
             <th scope="col">Товар</th>
             <th scope="col"></th>
             <th scope="col"></th>
+            <th scope="col">Опции</th>
             <th scope="col">Цена</th>
             <th scope="col"></th>
           </tr>
@@ -38,7 +39,20 @@
           <tr v-for="item in $root.orderData.products" :key="item.product_id">
             <th scope="row">#</th>
             <td>{{ item["product_id"] }}</td>
-            <td>{{ item["title"] }}</td>
+            <td>
+              {{ item["title"] }}
+              <div class="number">
+                <input type="number" :value="item['amount']" v-on:click="amountProduct($event.target, item['product_id'])"/>
+              </div>
+            </td>
+            <td>
+              <div v-if="$root.orderData.type_order == 'electr'">
+              <img :src="$baseDir + '/images/variant_image/7/' + imageSert" width="100"/>
+              <select @change="changeSert($event.target)">
+                <option v-for="item in $root.orderData.sertificate" :key="item.variant_id" :value="item.variant_id">{{item.title}}</option>
+              </select>
+              </div>
+            </td>
             <td>{{ item["price"] }}</td>
             <td style="text-align: right">
               <a href="#" v-on:click="delFromCart(item['product_id'])"
@@ -119,6 +133,7 @@ export default {
   data() {
     return {
       isOrdering: false,
+      imageSert: ''
     };
   },
   mounted() {},
@@ -147,6 +162,16 @@ export default {
         this.$root.orderData.productsAdd[event.value]["checked"] = "N";
       }
     },
+    amountProduct(event, id){
+      if(event.value < 0){
+        event.value = 0
+      }
+      this.$root.orderData.products[id].amount = event.value
+    },
+    changeSert(event){
+      let id = event.value
+      this.imageSert = this.$root.orderData.sertificate[id].path
+    }
   },
 };
 </script>

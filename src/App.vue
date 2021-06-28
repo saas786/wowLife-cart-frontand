@@ -62,6 +62,7 @@ export default {
         user_id: 0,
         products: {},
         productsAdd: {},
+        sertificate: {},
         user_data: {
           email: "",
           b_firstname: "",
@@ -111,6 +112,23 @@ export default {
           })
         }
       })
+
+      params = {
+        params: {
+          entity: 'sertificate'
+        }
+      };
+      this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+        if(response.data){
+          response.data.forEach(item => {
+            this.$root.orderData.sertificate[item['variant_id']] = {
+              variant_id: item['variant_id'],
+              title: item['variant_name'],
+              path: item['path'],
+            }
+          })
+        }
+      }) 
     },
     loadProductsAdd(){
       let params = {
@@ -161,7 +179,7 @@ export default {
           }
         }; 
         this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-          console.log(response.data)
+          console.log('save: ' + response.data)
         })
       },
       deep: true

@@ -1,5 +1,5 @@
 <template>
-  {{  $root.orderData }}
+  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>
   <div v-if="$root.orderData"> <Cart /></div>
 </template>
 
@@ -14,47 +14,55 @@ export default {
   data(){
     return {
       orderData: null,
-      sessionIds: []
+      sessionId: ''
     }
   },
   mounted() {
-    let cookie = this.$cookies
-    let cookieArr = cookie.keys()
-    cookieArr.forEach(item => {
-      if(item.includes('sid_customer')){
-        this.sessionIds.push(cookie.get(item))
-      }
-    }); 
+    // let cookie = this.$cookies
+    // let cookieArr = cookie.keys()
+    // cookieArr.forEach(item => {
+    //   if(item.includes('sid_customer')){
+    //     this.sessionIds.push(cookie.get(item))
+    //   }
+    // });
+    this.sessionId = document.getElementById("sessionId").innerHTML
 
-    let params = {
-      params: {
-        entity: 'cartInfoGet',
-        sessionId: this.sessionIds
-      }
-    }; 
-    
-    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-      if(response.data){
-        if(Object.keys(response.data).length != 0){
-          console.log('DB'); 
-          this.orderData = response.data
-          this.loadProducts()
-          this.loadPayments()
-        } else {
-          console.log('init')
-          this.init_orderData()
-          this.loadProducts()
-          this.loadProductsAdd()
-          this.loadPayments()
-        }
-      } else {
-        console.log('init')
-        this.init_orderData()
-        this.loadProducts()
-        this.loadProductsAdd()
-        this.loadPayments()
-      }       
-    })
+
+
+    console.log('init')
+    this.init_orderData()
+    this.loadProducts()
+    this.loadProductsAdd()
+    this.loadPayments()
+
+    // let params = {
+    //   params: {
+    //     entity: 'cartInfoGet',
+    //     sessionId: this.sessionIds
+    //   }
+    // };
+    // this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+    //   if(response.data){
+    //     if(Object.keys(response.data).length != 0){
+    //       console.log('DB'); 
+    //       this.orderData = response.data
+    //       this.loadProducts()
+    //       this.loadPayments()
+    //     } else {
+    //       console.log('init')
+    //       this.init_orderData()
+    //       this.loadProducts()
+    //       this.loadProductsAdd()
+    //       this.loadPayments()
+    //     }
+    //   } else {
+    //     console.log('init')
+    //     this.init_orderData()
+    //     this.loadProducts()
+    //     this.loadProductsAdd()
+    //     this.loadPayments()
+    //   }       
+    // })
   },
   methods: {
     init_orderData(){
@@ -62,7 +70,6 @@ export default {
         user_id: 0,
         products: {},
         productsAdd: {},
-        sertificate: {},
         user_data: {
           email: "",
           b_firstname: "",
@@ -89,46 +96,23 @@ export default {
         payment:{},
         paymentSel: 0,
         delivery: null,
-        priceDelivery: 0
+        priceDelivery: 0,
+        amount: 0
       }
     },
     loadProducts(){
       let params = {
         params: {
           entity: 'carts',
-          sessionId: this.sessionIds
+          sessionId: this.sessionId
         }
       }; 
       
       this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
         if(response.data){
-          response.data.forEach(item => {
-            this.$root.orderData.products[item['product_id']] = {
-              product_id: item['product_id'],
-              title: item.extra['product'],
-              amount: item['amount'],
-              price: item['price']
-            }
-          })
+          this.$root.orderData.products = response.data
         }
       })
-
-      params = {
-        params: {
-          entity: 'sertificate'
-        }
-      };
-      this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-        if(response.data){
-          response.data.forEach(item => {
-            this.$root.orderData.sertificate[item['variant_id']] = {
-              variant_id: item['variant_id'],
-              title: item['variant_name'],
-              path: item['path'],
-            }
-          })
-        }
-      }) 
     },
     loadProductsAdd(){
       let params = {
@@ -166,6 +150,20 @@ export default {
           })
         }
       })
+    },
+    amount(){
+      let amount = 0 
+      let key = 0
+      for (key in this.$root.orderData.products) {
+         amount += this.$root.orderData.products[key].amount * this.$root.orderData.products[key].price
+      }
+      for (key in this.$root.orderData.productsAdd) {
+          if(this.$root.orderData.productsAdd[key].checked == 'Y'){
+            amount += Number(this.$root.orderData.productsAdd[key].price)
+          }
+      }
+      amount += this.$root.orderData.priceDelivery
+      this.$root.orderData.amount = amount
     }
   },
   watch: {
@@ -181,6 +179,7 @@ export default {
         this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
           console.log('save: ' + response.data)
         })
+        this.amount()
       },
       deep: true
     }

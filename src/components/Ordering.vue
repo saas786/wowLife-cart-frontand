@@ -215,6 +215,7 @@ export default {
       dataSend['payment_id'] = dataSend.paymentSel
       dataSend['shipping_id'] = dataSend.delivery
 
+      //удалить product_options если заказ fiz
       let data = {
         params: {
           entity: "ordering",

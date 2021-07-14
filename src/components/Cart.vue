@@ -1,5 +1,5 @@
 <template>
-  <div class="container cart" v-if="isOrdering === false">
+  <div id='cart' class="container" v-if="isOrdering === false">
     <div v-if="Object.keys($root.orderData.products).length != 0">
       <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -37,20 +37,34 @@
         </thead>
         <tbody>
           <tr v-for="item in $root.orderData.products" :key="item.product_id">
-            <th scope="row">#</th>
+            <th scope="row"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
             <td>{{ item["product_id"] }}</td>
             <td>
               {{ item["title"] }}
               <div class="number">
-                <input type="number" :value="item['amount']" v-on:click="amountProduct($event.target, item['product_id'])"/>
+                <input
+                  type="number"
+                  :value="item['amount']"
+                  v-on:click="amountProduct($event.target, item['product_id'])"
+                />
               </div>
             </td>
             <td>
               <div v-if="$root.orderData.type_order == 'electr'">
-              <img :src="$baseDir + '/images/variant_image/7/' + imageSert" width="100"/>
-              <select @change="changeSert($event.target)">
-                <option v-for="item in $root.orderData.sertificate" :key="item.variant_id" :value="item.variant_id">{{item.title}}</option>
-              </select>
+                <img
+                  v-if="item['sertImg']"
+                  :src="$baseDir + '/images/variant_image/7/' + item['sertImg']"
+                  width="100"
+                />
+                <select v-if="sertificate" @change="changeSert($event.target)">
+                  <option
+                    v-for="itemSert in sertificate"
+                    :key="itemSert.variant_id"
+                    :value="item['product_id'] + ':' + itemSert.variant_id"
+                  >
+                    {{ itemSert.title }}
+                  </option>
+                </select>
               </div>
             </td>
             <td>{{ item["price"] }}</td>
@@ -110,6 +124,9 @@
                 />
                 Самовывоз
               </p>
+              <p>
+                К оплате {{$root.orderData.amount}}
+              </p>
               <button v-on:click="isOrdering = true">Оформить</button>
             </div>
           </div>
@@ -133,14 +150,47 @@ export default {
   data() {
     return {
       isOrdering: false,
-      imageSert: ''
+      sertificate: {},
+      imageSert: "",
     };
   },
-  mounted() {},
+  mounted() {
+    let params = {
+      params: {
+        entity: "sertificate",
+      },
+    };
+    this.axios
+      .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
+      .then((response) => {
+        if (response.data) {
+          response.data.forEach((item, index) => {
+            this.sertificate[item["variant_id"]] = {
+              variant_id: item["variant_id"],
+              option_id: item["option_id"],
+              title: item["variant_name"],
+              path: item["path"],
+            };
+            if(index == 0){
+              var productIds = Object.keys(this.$root.orderData.products)
+              productIds.forEach((productId) =>{
+                if (
+                  "product_options" in this.$root.orderData.products[productId] === false
+                ) {
+                  this.$root.orderData.products[productId]["product_options"] = {};
+                }
+
+                this.$root.orderData.products[productId].product_options[item["option_id"]] = item["variant_id"]
+                this.$root.orderData.products[productId]["sertImg"] = item["path"];
+              })
+            }
+          });
+        }
+      });
+  },
   methods: {
     delFromCart(product_id) {
-      console.log(this.$root.orderData.products[product_id])
-      delete this.$root.orderData.products[product_id]
+      delete this.$root.orderData.products[product_id];
 
       let params = {
         params: {
@@ -151,9 +201,7 @@ export default {
       };
       this.axios
         .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
-        .then((response) => {
-          console.log(response);
-        });
+        .then();
     },
     checkAdditional(event) {
       if (event.checked === true) {
@@ -162,20 +210,37 @@ export default {
         this.$root.orderData.productsAdd[event.value]["checked"] = "N";
       }
     },
-    amountProduct(event, id){
-      if(event.value < 0){
-        event.value = 0
+    amountProduct(event, id) {
+      if (event.value < 0) {
+        event.value = 0;
       }
-      this.$root.orderData.products[id].amount = event.value
+      this.$root.orderData.products[id].amount = event.value;
     },
-    changeSert(event){
-      let id = event.value
-      this.imageSert = this.$root.orderData.sertificate[id].path
-    }
+    changeSert(event) {
+      let value = event.value.split(":");
+      let productId = value[0];
+      let sertId = value[1];
+      let optionId = this.sertificate[sertId].option_id;
+
+      if (
+        "product_options" in this.$root.orderData.products[productId] ===
+        false
+      ) {
+        this.$root.orderData.products[productId]["product_options"] = {};
+      }
+
+      this.$root.orderData.products[productId].product_options[optionId] =
+        sertId;
+      this.$root.orderData.products[productId]["sertImg"] =
+        this.sertificate[sertId].path;
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style lang="scss" scoped>
+  #cart{
+    img{width: 120px}
+  }
 </style>

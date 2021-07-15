@@ -1,7 +1,7 @@
 <template>
-  <div id='cart' class="container" v-if="isOrdering === false">
-    <div v-if="Object.keys($root.orderData.products).length != 0">
-      <ul class="nav nav-tabs">
+  <div id='cart' class="container">
+    <div v-if="Object.keys($root.orderData.products).length != 0" class="row">
+      <!-- <ul class="nav nav-tabs">
         <li class="nav-item">
           <a
             class="nav-link"
@@ -23,84 +23,110 @@
             Электронный
           </a>
         </li>
-      </ul>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Товар</th>
-            <th scope="col"></th>
-            <th scope="col"></th>
-            <th scope="col">Опции</th>
-            <th scope="col">Цена</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in $root.orderData.products" :key="item.product_id">
-            <th scope="row"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
-            <td>{{ item["product_id"] }}</td>
-            <td>
-              {{ item["title"] }}
-              <div class="number">
-                <input
-                  type="number"
-                  :value="item['amount']"
-                  v-on:click="amountProduct($event.target, item['product_id'])"
-                />
-              </div>
-            </td>
-            <td>
-              <div v-if="$root.orderData.type_order == 'electr'">
-                <img
-                  v-if="item['sertImg']"
-                  :src="$baseDir + '/images/variant_image/7/' + item['sertImg']"
-                  width="100"
-                />
-                <select v-if="sertificate" @change="changeSert($event.target)">
-                  <option
-                    v-for="itemSert in sertificate"
-                    :key="itemSert.variant_id"
-                    :value="item['product_id'] + ':' + itemSert.variant_id"
-                  >
-                    {{ itemSert.title }}
-                  </option>
-                </select>
-              </div>
-            </td>
-            <td>{{ item["price"] }}</td>
-            <td style="text-align: right">
-              <a href="#" v-on:click="delFromCart(item['product_id'])"
-                >Удалить</a
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="row">
-        <div class="col">
-          <div class="d-flex justify-content-start">
-            <div>
-              <h6>Дополнительные услуги</h6>
+      </ul> -->
+      <div class="col-6">
+        <table class="table">
+          <!-- <thead>
+            <tr>
+              <th scope="col">Товар</th>
+              <th scope="col"></th>
+              <th scope="col"></th>
+              <th scope="col">Опции</th>
+              <th scope="col">Цена</th>
+              <th scope="col"></th>
+            </tr>
+          </thead> -->
+          <tbody>
+            <tr v-for="item, index in $root.orderData.products" :key="index">
+              <th scope="row"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
+              <td>
+                {{ item.product }}
+                <div class="number">
+                  <input
+                    type="number"
+                    min="1"
+                    :value="item.amount"
+                    @click="amountProduct($event.target, index)"
+                    @blur="amountProduct($event.target, index)"
+                  />
+                </div>
+                <a href="#" v-on:click="delFromCart(index)"
+                  >Удалить</a
+                >
+              </td>
+              <td>
+                <div v-for="option, index in item.options_sel" :key="index">
+                  {{index}}: {{option}}
+                </div>
+                {{}}
+                <!-- <div v-if="$root.orderData.type_order == 'electr'">
+                  <img
+                    v-if="item['sertImg']"
+                    :src="$baseDir + '/images/variant_image/7/' + item['sertImg']"
+                    width="100"
+                  />
+                  <select v-if="sertificate" @change="changeSert($event.target)">
+                    <option
+                      v-for="itemSert in sertificate"
+                      :key="itemSert.variant_id"
+                      :value="item['product_id'] + ':' + itemSert.variant_id"
+                    >
+                      {{ itemSert.title }}
+                    </option>
+                  </select>
+                </div> -->
+              </td>
+              <td v-if="$root.orderData.type_order == 'fiz'">{{ item.amount * item.price }}</td>
+              <td v-else>{{ item.amount * (item.price + $root.orderData.priceDelivery) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="row">
+          <p>
+            К оплате {{$root.orderData.amount}}
+          </p>
+          <div class="col">
+            <div class="d-flex justify-content-start">
+              <div>
+                <h6>Дополнительные услуги</h6>
+                <div
+                  v-if="
+                    $root.orderData.type_order == 'fiz' &&
+                    Object.keys($root.orderData.productsAdd).length != 0
+                  "
+                >
+                  <p v-for="item in $root.orderData.productsAdd" :key="item.id">
+                    <input
+                      type="checkbox"
+                      :value="item.id"
+                      v-on:click="checkAdditional($event.target)"
+                      :checked="item.checked == 'Y' ? true : false"
+                    />
+
+                    {{ item.title }} {{ item.price }}
+                  </p>
+                </div>
+              </div>             
               <div
                 v-if="
-                  $root.orderData.type_order == 'fiz' &&
+                  $root.orderData.type_order == 'electr' &&
                   Object.keys($root.orderData.productsAdd).length != 0
                 "
               >
-                <p v-for="item in $root.orderData.productsAdd" :key="item.id">
-                  <input
-                    type="checkbox"
-                    :value="item.id"
-                    v-on:click="checkAdditional($event.target)"
-                    :checked="item.checked == 'Y' ? true : false"
-                  />
-
-                  {{ item.title }} {{ item.price }}
-                </p>
+                <h6>Электронный сертификат</h6>
+                <div v-for="item, index in sertificate" :key="index">
+                  <img :src='$baseDir + "/images/variant_image/7/" + item.path' 
+                        @click="$root.orderData.sertSel=index; $root.orderData.priceDelivery = Number(item.price);"/>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="col-6">
+        <Ordering :sertificate = 'sertificate'/>
+      </div>
+      <!-- <div class="row">
         <div class="col">
           <div class="d-flex justify-content-end">
             <div>
@@ -124,20 +150,15 @@
                 />
                 Самовывоз
               </p>
-              <p>
-                К оплате {{$root.orderData.amount}}
-              </p>
-              <button v-on:click="isOrdering = true">Оформить</button>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
     <div class="container" v-else>
       <h2 style="text-align: center">В корзине нет товаров</h2>
     </div>
   </div>
-  <Ordering v-else />
 </template>
 <script>
 import Ordering from "../components/Ordering.vue";
@@ -149,9 +170,7 @@ export default {
   },
   data() {
     return {
-      isOrdering: false,
       sertificate: {},
-      imageSert: "",
     };
   },
   mounted() {
@@ -164,26 +183,30 @@ export default {
       .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
       .then((response) => {
         if (response.data) {
-          response.data.forEach((item, index) => {
-            this.sertificate[item["variant_id"]] = {
-              variant_id: item["variant_id"],
-              option_id: item["option_id"],
-              title: item["variant_name"],
-              path: item["path"],
-            };
-            if(index == 0){
-              var productIds = Object.keys(this.$root.orderData.products)
-              productIds.forEach((productId) =>{
-                if (
-                  "product_options" in this.$root.orderData.products[productId] === false
-                ) {
-                  this.$root.orderData.products[productId]["product_options"] = {};
-                }
-
-                this.$root.orderData.products[productId].product_options[item["option_id"]] = item["variant_id"]
-                this.$root.orderData.products[productId]["sertImg"] = item["path"];
-              })
+          response.data.forEach((item) => {
+            if(item["variant_name"] != 'Нет'){
+              this.sertificate[item["variant_id"]] = {
+                variant_id: item["variant_id"],
+                option_id: item["option_id"],
+                title: item["variant_name"],
+                path: item["path"],
+                price: item["modifier"],
+              };
             }
+            // Инициализация сертификата у каждого продукта по умолчанию
+            //  if(index == 0){
+            //   var productIds = Object.keys(this.$root.orderData.products)
+            //   productIds.forEach((productId) =>{
+            //     if (
+            //       "product_options" in this.$root.orderData.products[productId] === false
+            //     ) {
+            //       this.$root.orderData.products[productId]["product_options"] = {};
+            //     }
+
+            //     this.$root.orderData.products[productId].product_options[item["option_id"]] = item["variant_id"]
+            //     this.$root.orderData.products[productId]["sertImg"] = item["path"];
+            //   })
+            // }
           });
         }
       });
@@ -195,7 +218,7 @@ export default {
       let params = {
         params: {
           entity: "delete",
-          sessionId: this.$root.sessionIds,
+          sessionId: this.$root.sessionId,
           product_id: product_id,
         },
       };
@@ -211,29 +234,29 @@ export default {
       }
     },
     amountProduct(event, id) {
-      if (event.value < 0) {
-        event.value = 0;
+      if (event.value < 1) {
+        event.value = 1;
       }
-      this.$root.orderData.products[id].amount = event.value;
+      this.$root.orderData.products[id].amount = Number(event.value);
     },
-    changeSert(event) {
-      let value = event.value.split(":");
-      let productId = value[0];
-      let sertId = value[1];
-      let optionId = this.sertificate[sertId].option_id;
+    //changeSert(event) {
+      // let value = event.value.split(":");
+      // let productId = value[0];
+      // let sertId = value[1];
+      // let optionId = this.sertificate[sertId].option_id;
 
-      if (
-        "product_options" in this.$root.orderData.products[productId] ===
-        false
-      ) {
-        this.$root.orderData.products[productId]["product_options"] = {};
-      }
+      // if (
+      //   "product_options" in this.$root.orderData.products[productId] ===
+      //   false
+      // ) {
+      //   this.$root.orderData.products[productId]["product_options"] = {};
+      // }
 
-      this.$root.orderData.products[productId].product_options[optionId] =
-        sertId;
-      this.$root.orderData.products[productId]["sertImg"] =
-        this.sertificate[sertId].path;
-    },
+      // this.$root.orderData.products[productId].product_options[optionId] =
+      //   sertId;
+      // this.$root.orderData.products[productId]["sertImg"] =
+      //   this.sertificate[sertId].path;
+    //},
   },
 };
 </script>

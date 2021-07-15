@@ -18,51 +18,28 @@ export default {
     }
   },
   mounted() {
-    // let cookie = this.$cookies
-    // let cookieArr = cookie.keys()
-    // cookieArr.forEach(item => {
-    //   if(item.includes('sid_customer')){
-    //     this.sessionIds.push(cookie.get(item))
-    //   }
-    // });
     this.sessionId = document.getElementById("sessionId").innerHTML
 
-
-
-    console.log('init')
-    this.init_orderData()
-    this.loadProducts()
-    this.loadProductsAdd()
-    this.loadPayments()
-
-    // let params = {
-    //   params: {
-    //     entity: 'cartInfoGet',
-    //     sessionId: this.sessionIds
-    //   }
-    // };
-    // this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
-    //   if(response.data){
-    //     if(Object.keys(response.data).length != 0){
-    //       console.log('DB'); 
-    //       this.orderData = response.data
-    //       this.loadProducts()
-    //       this.loadPayments()
-    //     } else {
-    //       console.log('init')
-    //       this.init_orderData()
-    //       this.loadProducts()
-    //       this.loadProductsAdd()
-    //       this.loadPayments()
-    //     }
-    //   } else {
-    //     console.log('init')
-    //     this.init_orderData()
-    //     this.loadProducts()
-    //     this.loadProductsAdd()
-    //     this.loadPayments()
-    //   }       
-    // })
+    let params = {
+      params: {
+        entity: 'cartInfoGet',
+        sessionId: this.sessionId
+      }
+    };
+    this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      if( response.data === false || response.data[0] == 'No' ){
+        console.log('init')
+        this.init_orderData()
+        this.loadProducts()
+        this.loadProductsAdd()
+        this.loadPayments()
+      } else {
+        console.log('DB'); 
+        this.orderData = response.data
+        this.loadProducts()
+        this.loadPayments()
+      }    
+    })
   },
   methods: {
     init_orderData(){
@@ -97,7 +74,8 @@ export default {
         paymentSel: 0,
         delivery: null,
         priceDelivery: 0,
-        amount: 0
+        amount: 0,
+        sertSel: 0
       }
     },
     loadProducts(){
@@ -151,18 +129,30 @@ export default {
         }
       })
     },
-    amount(){
+    calcPrice(){
       let amount = 0 
       let key = 0
+      let total_count = 0
       for (key in this.$root.orderData.products) {
-         amount += this.$root.orderData.products[key].amount * this.$root.orderData.products[key].price
+        amount += this.$root.orderData.products[key].amount * this.$root.orderData.products[key].price
+        total_count += this.$root.orderData.products[key].amount
       }
-      for (key in this.$root.orderData.productsAdd) {
-          if(this.$root.orderData.productsAdd[key].checked == 'Y'){
-            amount += Number(this.$root.orderData.productsAdd[key].price)
-          }
+      if(this.$root.orderData.type_order == 'fiz'){
+        for (key in this.$root.orderData.productsAdd) {
+            if(this.$root.orderData.productsAdd[key].checked == 'Y'){
+              amount += Number(this.$root.orderData.productsAdd[key].price)
+            }
+        }
       }
-      amount += this.$root.orderData.priceDelivery
+
+      if(this.$root.orderData.type_order != 'electr'){
+        // console.log(priceDelivery)
+        // console.log(countProducts)
+        // priceDelivery = priceDelivery * countProducts
+        amount += this.$root.orderData.priceDelivery
+      } else {
+        amount += this.$root.orderData.priceDelivery * total_count
+      }
       this.$root.orderData.amount = amount
     }
   },
@@ -172,14 +162,14 @@ export default {
         let params = {
           params: {
             entity: 'cartInfoSave',
-            sessionId: this.sessionIds,
+            sessionId: this.sessionId,
             data: val
           }
         }; 
         this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
           console.log('save: ' + response.data)
         })
-        this.amount()
+        this.calcPrice() // Функция пересчёта общей стоимости
       },
       deep: true
     }

@@ -178,5 +178,7 @@ export default {
 </script>
 
 <style>
-
+.error{
+ border:1px solid red;
+}
 </style>

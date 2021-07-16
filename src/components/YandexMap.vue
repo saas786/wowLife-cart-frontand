@@ -25,6 +25,7 @@
       />
     </GMapCluster>
   </GMapMap>
+  <p>Зелёный - 300 р. | Жёлтый - 500р.</p>
 </template>
 <script>
 export default {
@@ -95,11 +96,16 @@ export default {
             document.getElementById("addressInput").value =
               results[0].formatted_address;
             this.$root.orderData.user_data.b_address = results[0].formatted_address;
+            document.getElementById("addressInput").classList.remove("error")
           } else {
-            window.alert("No results found");
+            this.$root.orderData.delivery = null
+            document.getElementById("addressInput").classList.add("error")
+            console.log("No results found")
           }
         } else {
-          window.alert("Geocoder failed due to: " + status);
+          this.$root.orderData.delivery = null
+          document.getElementById("addressInput").classList.add("error")
+          console.log("Geocoder failed due to: " + status)
         }
       });
     },
@@ -118,7 +124,7 @@ export default {
             this.marker[0].position.lat = results[0].geometry.location.lat();
             this.marker[0].position.lng = results[0].geometry.location.lng();
 
-            this.$root.orderData.delivery = "null";
+            this.$root.orderData.delivery = null;
             this.$root.orderData.priceDelivery = 0;
 
             for(let key in this.deliveryZone){
@@ -132,11 +138,18 @@ export default {
                 this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice;
                 this.$root.orderData.user_data.b_city = this.deliveryZone[key].deliveryType;
                 this.$root.orderData.user_data.b_state = this.deliveryZone[key].deliveryType;
+
+                document.getElementById("addressInput").classList.remove("error")
+                break
+              } else {
+                document.getElementById("addressInput").classList.add("error")
               }
             }
+            
           } else {
-            //alert("Geocode was not successful for the following reason: " + status);
-            alert("Адрес не входит в зону доставки")
+            this.$root.orderData.delivery = null
+            document.getElementById("addressInput").classList.add("error")
+            console.log("Адрес не входит в зону доставки")
           }
         })
       });

@@ -38,7 +38,7 @@
           </thead> -->
           <tbody>
             <tr v-for="item, index in $root.orderData.products" :key="index">
-              <th scope="row"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
+              <th scope="row" v-if="item.main_pair"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
               <td>
                 {{ item.product }}
                 <div class="number">

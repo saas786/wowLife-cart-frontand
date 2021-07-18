@@ -83,7 +83,7 @@
         </table>
         <div class="row">
           <p>
-            К оплате {{$root.orderData.amount}}
+            К оплате {{ animatedTotal }}
           </p>
           <div class="col">
             <div class="d-flex justify-content-start">
@@ -103,7 +103,7 @@
                       :checked="item.checked == 'Y' ? true : false"
                     />
 
-                    {{ item.title }} {{ item.price }}
+                    {{ item.title }} {{ item.price }} 
                   </p>
                 </div>
               </div>             
@@ -170,6 +170,7 @@
 </template>
 <script>
 import Ordering from "../components/Ordering.vue";
+import { gsap } from 'gsap';
 
 export default {
   name: "Cart",
@@ -179,6 +180,9 @@ export default {
   data() {
     return {
       sertificate: {},
+      number: 0,
+      tweenedNumber: this.$root.orderData.amount,
+      priceProduct: 0
     };
   },
   mounted() {
@@ -266,6 +270,16 @@ export default {
       //   this.sertificate[sertId].path;
     //},
   },
+  computed: {
+    animatedTotal() {
+      return this.tweenedNumber.toFixed(0)
+    },
+  },
+  watch: {
+    '$root.orderData.amount': function (newVal){
+        gsap.to(this.$data, { duration: 0.5, tweenedNumber:  newVal})
+     },
+  }
 };
 </script>
 

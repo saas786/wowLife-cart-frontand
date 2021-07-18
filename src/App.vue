@@ -1,7 +1,7 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>
-  <transition name="fade">
-    <div v-if="$root.orderData"> <Cart /></div>
+  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>    
+  <transition name="fadeLoad">
+    <div v-if="$root.orderData" v-show="is_show"> <Cart /></div>
   </transition>
 </template>
 
@@ -17,6 +17,7 @@ export default {
     return {
       orderData: null,
       sessionId: '',
+      is_show: false,
       loader: '',
     }
   },
@@ -30,6 +31,7 @@ export default {
       }
     };
     this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      this.is_show = true 
       if( response.data === false || response.data[0] == 'No' ){
         console.log('init')
         this.init_orderData()
@@ -41,7 +43,7 @@ export default {
         this.orderData = response.data
         this.loadProducts()
         this.loadPayments()
-      }    
+      }       
     })
   },
   methods: {
@@ -209,12 +211,14 @@ export default {
     font-size: 36px;
     color: white;
   }
+}
+.fadeLoad-enter-active,
+.fadeLoad-leave-active {
+  transition: opacity .7s linear;
+}
 
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
-    opacity: 0;
-  }
+.fadeLoad-enter-from,
+.fadeLoad-leave-to {
+  opacity: 0;
 }
 </style>

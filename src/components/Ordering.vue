@@ -46,151 +46,155 @@
         $root.orderData.delivery = 'pickup';
         $root.orderData.priceDelivery = 0;
         $root.orderData.type_order = 'fiz';
-        this.$root.orderData.user_data.b_address = 'Санкт-Петербург, пр Медиков'
+        $root.orderData.user_data.b_address = 'Санкт-Петербург, пр Медиков'
       "
     >
       Самовывоз
     </span>
     <span @click="selOrderElectr"> Электронный сертификат </span>
   </div>
-  <div
-    v-if="
-      $root.orderData.type_order != 'electr' &&
-      $root.orderData.delivery != 'pickup'
-    "
-  >
-    <div>
-      1.Адрес доставки<br />
-      <YandexMap :delivery="delivery" />
-    </div>
-    <div>
-      2.Время доставки<br />
-      <input
-        id="input_delivery_time"
-        name="delivery_time"
-        type="text"
-        @blur="setData($event.target)"
-        @keyup.enter="onEnter($event.target)"
-        :value="$root.orderData.user_data.delivery_time"
-      />
-    </div>
-    <div>
-      3.Способ оплаты<br />
-      <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
+  <transition name="fadeDelivery">
+    <div
+      v-if="
+        $root.orderData.type_order != 'electr' &&
+        $root.orderData.delivery != 'pickup'
+      "
+    >
+      <div>
+        1.Адрес доставки<br />
+        <YandexMap :delivery="delivery" />
+      </div>
+      <div>
+        2.Время доставки<br />
         <input
-          name="oplata"
-          type="radio"
-          @click="$root.orderData.paymentSel = key"
-          :checked="key == $root.orderData.paymentSel"
+          id="input_delivery_time"
+          name="delivery_time"
+          type="text"
+          @blur="setData($event.target)"
+          @keyup.enter="onEnter($event.target)"
+          :value="$root.orderData.user_data.delivery_time"
         />
-        {{ item.title }}
-      </p>
-    </div>
-    <div>
-      4.Электронная почта<br />
-      <Email ref="emailDelivery"/>
-    </div>
-    <div>
-      5.Телефон<br />
-      <Phone ref="phoneDelivery"/>
-      <Name ref="nameDelivery"/>
-      Имя
-    </div>
-    <div>
-      6.Комментарий<br />
-      <Comment /> 
-    </div>
-  </div>
-
-  <div
-    v-if="
-      $root.orderData.type_order != 'electr' &&
-      $root.orderData.delivery == 'pickup'
-    "
-  >
-    <div>
-      1.Адрес самовывоза<br />
-      <!-- <p><input name="address" type="radio" value="1" /> СПб</p> -->
-      Санкт-Петербург, пр Медиков
-      <GMapMap
-        :center="center"
-        :zoom="9"
-        map-type-id="roadmap"
-        style="width: 500px; height: 300px"
-      >
-        <GMapCluster>
-          <GMapMarker
-            :key="index"
-            v-for="(m, index) in markers"
-            :position="m.position"
-            :clickable="false"
-            :draggable="false"
-            @click="center = m.position"
+      </div>
+      <div>
+        3.Способ оплаты<br />
+        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
+          <input
+            name="oplata"
+            type="radio"
+            @click="$root.orderData.paymentSel = key"
+            :checked="key == $root.orderData.paymentSel"
           />
-        </GMapCluster>
-      </GMapMap>
+          {{ item.title }}
+        </p>
+      </div>
+      <div>
+        4.Электронная почта<br />
+        <Email ref="emailDelivery"/>
+      </div>
+      <div>
+        5.Телефон<br />
+        <Phone ref="phoneDelivery"/>
+        <Name ref="nameDelivery"/>
+        Имя
+      </div>
+      <div>
+        6.Комментарий<br />
+        <Comment /> 
+      </div>
     </div>
-    <div>
-      2.Способ оплаты<br />
-      <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
-        <input
-          name="oplata"
-          type="radio"
-          @click="$root.orderData.paymentSel = key"
-          :checked="key == $root.orderData.paymentSel"
-        />
-        {{ item.title }}
-      </p>
+  </transition>
+  <transition name="fadeDelivery">
+    <div
+      v-if="
+        $root.orderData.type_order != 'electr' &&
+        $root.orderData.delivery == 'pickup'
+      "
+    >
+      <div>
+        1.Адрес самовывоза<br />
+        <!-- <p><input name="address" type="radio" value="1" /> СПб</p> -->
+        Санкт-Петербург, пр Медиков
+        <GMapMap
+          :center="center"
+          :zoom="9"
+          map-type-id="roadmap"
+          style="width: 500px; height: 300px"
+        >
+          <GMapCluster>
+            <GMapMarker
+              :key="index"
+              v-for="(m, index) in markers"
+              :position="m.position"
+              :clickable="false"
+              :draggable="false"
+              @click="center = m.position"
+            />
+          </GMapCluster>
+        </GMapMap>
+      </div>
+      <div>
+        2.Способ оплаты<br />
+        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
+          <input
+            name="oplata"
+            type="radio"
+            @click="$root.orderData.paymentSel = key"
+            :checked="key == $root.orderData.paymentSel"
+          />
+          {{ item.title }}
+        </p>
+      </div>
+      <div>
+        3.Электронная почта<br />
+        <Email ref="emailPickup"/>
+      </div>
+      <div>
+        4.Телефон<br />
+        <Phone ref="phonePickup"/>
+        <Name ref="namePickup"/>
+        Имя
+      </div>
+      <div>
+        5.Комментарий<br />
+        <Comment /> 
+      </div>
     </div>
-    <div>
-      3.Электронная почта<br />
-      <Email ref="emailPickup"/>
-    </div>
-    <div>
-      4.Телефон<br />
-      <Phone ref="phonePickup"/>
-      <Name ref="namePickup"/>
-      Имя
-    </div>
-    <div>
-      5.Комментарий<br />
-      <Comment /> 
-    </div>
-  </div>
+  </transition>
+  <transition name="fadeDelivery">
+    <div v-if="$root.orderData.type_order == 'electr'">
+      <div>
+        1.Способ оплаты<br />
+        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
+          <input
+            name="oplata"
+            v-if="item.title == 'Банковская карта'"
+            type="radio"
+            @click="$root.orderData.paymentSel = key"
+            :checked="key == $root.orderData.paymentSel"
+          />
+          {{ item.title }}
+        </p>
+      </div>
+      <div>
+        2.Электронная почта<br />
+        <Email ref="emailElectr"/>
+        Ваша почта
+        <Semail ref="semailElectr"/>
 
-  <div v-if="$root.orderData.type_order == 'electr'">
-    <div>
-      1.Способ оплаты<br />
-      <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
-        <input
-          name="oplata"
-          v-if="item.title == 'Банковская карта'"
-          type="radio"
-          @click="$root.orderData.paymentSel = key"
-          :checked="key == $root.orderData.paymentSel"
-        />
-        {{ item.title }}
-      </p>
+        почта получателя
+      </div>
+      <div>
+        3.Телефон<br />
+        <Phone ref="phoneElectr"/>
+        <Name ref="nameElectr"/>
+        Имя
+      </div>
+      <div>
+        4.Комментарий<br />
+        <Comment /> 
+      </div>
     </div>
-    <div>
-      2.Электронная почта<br />
-      <Email ref="emailElectr"/>
-      Ваша почта
-      <Semail ref="semailElectr"/>
-
-      почта получателя
-    </div>
-    <div>
-      3.Телефон<br />
-      <Phone ref="phoneElectr"/>
-      <Name ref="nameElectr"/>
-      Имя
-    </div>
-    <div>
-      4.Комментарий<br />
-      <Comment /> 
-    </div>
-  </div>
+  </transition>
   <div>
     <button v-on:click="ordering()">Подтвердить заказ</button>
   </div>
@@ -352,6 +356,14 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
+.fadeDelivery-enter-active,
+.fadeDelivery-leave-active {
+  transition: opacity .5s linear;
+}
 
+.fadeDelivery-enter-from,
+.fadeDelivery-leave-to {
+  opacity: 0;
+}
 </style>

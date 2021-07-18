@@ -1,6 +1,8 @@
 <template>
   <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>
-  <div v-if="$root.orderData"> <Cart /></div>
+  <transition name="fade">
+    <div v-if="$root.orderData"> <Cart /></div>
+  </transition>
 </template>
 
 <script>
@@ -14,7 +16,8 @@ export default {
   data(){
     return {
       orderData: null,
-      sessionId: ''
+      sessionId: '',
+      loader: '',
     }
   },
   mounted() {
@@ -177,8 +180,41 @@ export default {
 }
 </script>
 
-<style>
-.error{
- border:1px solid red;
+<style lang="scss">
+#cart-vue{
+  .error{
+  border:1px solid red;
+  }
+  .popup-wrapper {
+    z-index: 9999999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .popup {
+    padding: 56px 120px;
+    border-radius: 32px;
+    position: relative;
+    text-align: center;
+    width: auto;
+    box-sizing: border-box;
+  }
+  .popup .text{
+    font-size: 36px;
+    color: white;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+    opacity: 0;
+  }
 }
 </style>

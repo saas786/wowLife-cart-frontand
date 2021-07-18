@@ -38,10 +38,10 @@
             { "lat": 60.09657193722919, "lng": 30.38036916009736 },
             { "lat": 60.102048601740016, "lng": 30.25677296869111 }
         ],
-        "strokeColor": "#00ab15",
+        "strokeColor": "#1cbbb3",
         "strokeOpacity": 0.9,
         "strokeWeight": 3,
-        "fillColor": "#00ab15",
+        "fillColor": "#1cbbb3",
         "fillOpacity": 0.35
     },
     {
@@ -93,10 +93,10 @@
                 { "lat": 59.90934962847772, "lng": 30.208565945267026 }
             ]
         ],
-        "strokeColor": "#fbff00",
+        "strokeColor": "#f4de40",
         "strokeOpacity": 0.9,
         "strokeWeight": 3,
-        "fillColor": "#fbff00",
+        "fillColor": "#f4de40",
         "fillOpacity": 0.35
     },
     {
@@ -113,10 +113,10 @@
             { "lat": 59.73689163063722, "lng": 30.64511925006866 },
             { "lat": 59.75903148510325, "lng": 30.62417656208038 }
         ],
-        "strokeColor": "#fbff00",
+        "strokeColor": "#f4de40",
         "strokeOpacity": 0.9,
         "strokeWeight": 3,
-        "fillColor": "#fbff00",
+        "fillColor": "#f4de40",
         "fillOpacity": 0.35
     }
 ]

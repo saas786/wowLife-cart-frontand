@@ -159,6 +159,14 @@
       <h2 style="text-align: center">В корзине нет товаров</h2>
     </div>
   </div>
+  <div class="popup-wrapper" v-if="$root.loader != ''">
+    <div class="popup">
+      <div class="spinner-border text-light" style="width: 3rem; height: 3rem; vertical-align: 1rem" role="status">
+        <span class="sr-only"></span>
+      </div><br>
+      <span class="text">{{$root.loader}}</span>
+    </div>
+  </div>
 </template>
 <script>
 import Ordering from "../components/Ordering.vue";

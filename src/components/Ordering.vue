@@ -202,7 +202,7 @@ import Semail from "@/components/form/s_email.vue";
 import Phone from "@/components/form/phone.vue";
 import Name from "@/components/form/name.vue";
 import Comment from "@/components/form/comment.vue";
-import delivery from "@/assets/delivery/deleverySPb.json";
+import delivery from "@/assets/delivery/deleveryZone.json";
 
 export default {
   name: "Ordering",
@@ -281,32 +281,35 @@ export default {
         emptyField += this.$refs.nameElectr.validation()
       }
 
-      if (emptyField > 0) {
-        console.log("noOrder");
-      } else {
-        console.log("yeOrder");
+      
+      if (emptyField == 0) {
+        let dataSend = this.$root.orderData;
+        if (dataSend.delivery == 'pickup'){
+          dataSend.delivery = this.delivery[0].id
+        }
+        dataSend['payment_id'] = dataSend.paymentSel
+        dataSend['shipping_id'] = dataSend.delivery
+
+        //добавить всем товарам сертификат как опцию, если заказ electr
+        let data = {
+          params: {
+            entity: "ordering",
+            data: dataSend
+          },
+        };
+        this.$root.loader = 'Оформление заказа'
+        this.axios
+          .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
+          .then((response) => {
+            console.log("Заказ оформлен!");
+            console.log(response.data);
+            if(response.data.paymentURL){
+              document.location.href = response.data.paymentURL
+            } else {
+              document.location.href = this.$baseDir + '/zakaz-uspeshno-oformlen-1?Success=true&OrderId=' + response.data.orderId
+            }
+          });
       }
-
-      // let dataSend = this.$root.orderData;
-      // if (dataSend.delivery == 'pickup'){
-      //   dataSend.delivery = this.delivery[0].id
-      // }
-      // dataSend['payment_id'] = dataSend.paymentSel
-      // dataSend['shipping_id'] = dataSend.delivery
-
-      // //добавить всем товарам сертификат как опцию, если заказ electr
-      // let data = {
-      //   params: {
-      //     entity: "ordering",
-      //     data: dataSend
-      //   },
-      // };
-      // this.axios
-      //   .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
-      //   .then((response) => {
-      //     alert("Заказ оформлен!");
-      //     console.log(response.data);
-      //   });
     },
     payments(typePayments) {
       var key = null;

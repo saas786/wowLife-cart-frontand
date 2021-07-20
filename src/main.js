@@ -6,6 +6,7 @@ import "bootstrap";
 
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import Maska from 'maska'
 
 //import VueCookies from 'vue3-cookies'
 
@@ -17,6 +18,7 @@ app.config.globalProperties.$isProduction = process.env.NODE_ENV === 'production
 app.config.globalProperties.$baseDir = 'https://wanderfull.ru';//process.env.NODE_ENV === 'development' ? 'https://wanderfull.ru' : 'https://wowlife.club'; 
 
 app.use(VueAxios, axios)
+app.use(Maska);
 //app.use(VueCookies)
 
 app.use(VueGoogleMaps, {

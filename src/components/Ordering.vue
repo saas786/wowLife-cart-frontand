@@ -1,36 +1,4 @@
 <template>
-  <!-- <ul class="nav nav-tabs" v-if="$root.orderData.type_order != 'electr'">
-    <li class="nav-item">
-      <a
-        class="nav-link"
-        aria-current="page"
-        href="#"
-        v-on:click="
-          $root.orderData.delivery = null;
-        "
-        :class="[
-          $root.orderData.delivery != 'pickup' ? 'active' : '',
-        ]"
-      >
-        Доставка
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        class="nav-link"
-        href="#"
-        v-on:click="
-          $root.orderData.delivery = 'pickup';
-          $root.orderData.priceDelivery = 0;
-        "
-        :class="[
-          $root.orderData.delivery == 'pickup' ? 'active' : '',
-        ]"
-      >
-        Самовывоз
-      </a>
-    </li>
-  </ul> -->
   <div>
     Выбор способа доставки
     <span
@@ -89,6 +57,21 @@
       </div>
     </div>
   </div>
+  <div class="row">
+    <p class="h3 col-1">1 /</p>
+    <div class="col-11">
+      <p class="h3">Оформление заказа</p>
+      <Name ref="nameDelivery"/>
+      <Phone ref="phoneDelivery"/><br>
+      <Email ref="emailDelivery"/>
+    </div>
+  </div>
+  <div class="row" style="margin-top:80px">
+    <p class="h3 col-1">2 /</p>
+    <div class="col-11">
+      <p class="h3">Способ получения</p>
+    </div>
+  </div>
   <transition name="fadeDelivery">
     <div
       v-if="
@@ -125,12 +108,10 @@
       </div>
       <div>
         4.Электронная почта<br />
-        <Email ref="emailDelivery"/>
+ 
       </div>
       <div>
-        5.Телефон<br />
-        <Phone ref="phoneDelivery"/>
-        <Name ref="nameDelivery"/>
+
         Имя
       </div>
       <div>
@@ -182,12 +163,11 @@
       </div>
       <div>
         3.Электронная почта<br />
-        <Email ref="emailPickup"/>
+
       </div>
       <div>
         4.Телефон<br />
-        <Phone ref="phonePickup"/>
-        <Name ref="namePickup"/>
+
         Имя
       </div>
       <div>
@@ -213,7 +193,7 @@
       </div>
       <div>
         2.Электронная почта<br />
-        <Email ref="emailElectr"/>
+
         Ваша почта
         <Semail ref="semailElectr"/>
 
@@ -221,8 +201,7 @@
       </div>
       <div>
         3.Телефон<br />
-        <Phone ref="phoneElectr"/>
-        <Name ref="nameElectr"/>
+
         Имя
       </div>
       <div>
@@ -400,6 +379,7 @@ export default {
 };
 </script>
 <style scoped>
+
 .fadeDelivery-enter-active,
 .fadeDelivery-leave-active {
   transition: opacity .5s linear;

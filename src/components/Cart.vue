@@ -89,7 +89,7 @@
               </div>
             </transition>
           </div>
-          <div class="row">
+          <div class="row" style="position: relative;">
             <input type="text" placeholder="введите промокод" class="promo">
             <div class="circleBase type2"></div>
           </div>

@@ -1,62 +1,4 @@
 <template>
-  <div>
-    Выбор способа доставки
-    <span
-      @click="
-        $root.orderData.delivery = null;
-        $root.orderData.type_order = 'fiz';
-      "
-    >
-      Доставка курьером
-    </span>
-    <span
-      @click="
-        $root.orderData.delivery = 'pickup';
-        $root.orderData.priceDelivery = 0;
-        $root.orderData.type_order = 'fiz';
-        $root.orderData.user_data.b_address = 'Санкт-Петербург, пр Медиков'
-      "
-    >
-      Самовывоз
-    </span>
-    <span @click="selOrderElectr"> Электронный сертификат </span>
-  </div>
-  <div class="col">
-    <div class="d-flex justify-content-start">
-      <div>
-        <h6>Дополнительные услуги</h6>
-        <div
-          v-if="
-            $root.orderData.type_order == 'fiz' &&
-            Object.keys($root.orderData.productsAdd).length != 0
-          "
-        >
-          <p v-for="item in $root.orderData.productsAdd" :key="item.id">
-            <input
-              type="checkbox"
-              :value="item.id"
-              v-on:click="checkAdditional($event.target)"
-              :checked="item.checked == 'Y' ? true : false"
-            />
-
-            {{ item.title }} {{ item.price }} 
-          </p>
-        </div>
-      </div>             
-      <div
-        v-if="
-          $root.orderData.type_order == 'electr' &&
-          Object.keys($root.orderData.productsAdd).length != 0
-        "
-      >
-        <h6>Электронный сертификат</h6>
-        <div v-for="item, index in sertificate" :key="index">
-          <img :src='$baseDir + "/images/variant_image/7/" + item.path' 
-                @click="$root.orderData.sertSel=index; $root.orderData.priceDelivery = Number(item.price);"/>
-        </div>
-      </div>
-    </div>
-  </div>
   <div class="row">
     <p class="h3 col-1">1 /</p>
     <div class="col-11">
@@ -70,6 +12,37 @@
     <p class="h3 col-1">2 /</p>
     <div class="col-11">
       <p class="h3">Способ получения</p>
+      <div class="method-delivery">
+        <span
+          @click="
+            $root.orderData.delivery = null;
+            $root.orderData.type_order = 'fiz';
+          "
+          :class="[
+            isNaN($root.orderData.delivery) == false || $root.orderData.delivery == null ? 'active' : '',
+          ]"
+        >
+          Доставка курьером
+        </span>
+        <span
+          @click="
+            $root.orderData.delivery = 'pickup';
+            $root.orderData.priceDelivery = 0;
+            $root.orderData.type_order = 'fiz';
+            $root.orderData.user_data.b_address = 'Санкт-Петербург, пр Медиков, д. 3'
+          "
+          :class="[
+            $root.orderData.delivery == 'pickup' ? 'active' : '',
+          ]"
+        >
+          Самовывоз
+        </span>
+        <span 
+          @click="selOrderElectr"
+          :class="[
+            $root.orderData.delivery == 'electr' ? 'active' : '',
+          ]"> Электронный сертификат </span>
+      </div>
     </div>
   </div>
   <transition name="fadeDelivery">
@@ -78,45 +51,61 @@
         $root.orderData.type_order != 'electr' &&
         $root.orderData.delivery != 'pickup'
       "
+      class="row"
     >
-      <div>
-        1.Адрес доставки<br />
-        <YandexMap :delivery="delivery" />
-      </div>
-      <div>
-        2.Время доставки<br />
-        <input
-          id="input_delivery_time"
-          name="delivery_time"
-          type="text"
-          @blur="setData($event.target)"
-          @keyup.enter="onEnter($event.target)"
-          :value="$root.orderData.user_data.delivery_time"
-        />
-      </div>
-      <div>
-        3.Способ оплаты<br />
-        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
-          <input
-            name="oplata"
-            type="radio"
-            @click="$root.orderData.paymentSel = key"
-            :checked="key == $root.orderData.paymentSel"
-          />
-          {{ item.title }}
-        </p>
-      </div>
-      <div>
-        4.Электронная почта<br />
- 
-      </div>
-      <div>
+      <div class="col-1"></div>
+      <div class="col-10">
+        <div>
+          <YandexMap :delivery="delivery" />
+        </div>
+        <div>
+          <p class="h5">Дата и время доставки</p>
+          <Date/>
+        </div>
+        <div class="col">
+          <div class="d-flex justify-content-start">
+            <div>
+              <h6>Дополнительные услуги</h6>
+              <div
+                v-if="
+                  $root.orderData.type_order == 'fiz' &&
+                  Object.keys($root.orderData.productsAdd).length != 0
+                "
+              >
+                <p v-for="item in $root.orderData.productsAdd" :key="item.id">
+                  <input
+                    type="checkbox"
+                    :value="item.id"
+                    v-on:click="checkAdditional($event.target)"
+                    :checked="item.checked == 'Y' ? true : false"
+                  />
 
-        Имя
-      </div>
-      <div>
-        6.Комментарий<br />
-        <Comment /> 
+                  {{ item.title }} {{ item.price }} 
+                </p>
+              </div>
+            </div>             
+          </div>
+        </div>
+        <div>
+          3.Способ оплаты<br />
+          <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
+            <input
+              name="oplata"
+              type="radio"
+              @click="$root.orderData.paymentSel = key"
+              :checked="key == $root.orderData.paymentSel"
+            />
+            {{ item.title }}
+          </p>
+        </div>
+        <div>
+          4.Электронная почта<br />
+  
+        </div>
+        <div>
+
+          Имя
+        </div>
       </div>
     </div>
   </transition>
@@ -128,12 +117,11 @@
       "
     >
       <div>
-        1.Адрес самовывоза<br />
-        <!-- <p><input name="address" type="radio" value="1" /> СПб</p> -->
-        Санкт-Петербург, пр Медиков
+        Санкт-Петербург, пр Медиков, д. 3
         <GMapMap
           :center="center"
-          :zoom="9"
+          :zoom="13"
+          :options="{streetViewControl: false}"
           map-type-id="roadmap"
           style="width: 500px; height: 300px"
         >
@@ -161,19 +149,6 @@
           {{ item.title }}
         </p>
       </div>
-      <div>
-        3.Электронная почта<br />
-
-      </div>
-      <div>
-        4.Телефон<br />
-
-        Имя
-      </div>
-      <div>
-        5.Комментарий<br />
-        <Comment /> 
-      </div>
     </div>
   </transition>
   <transition name="fadeDelivery">
@@ -199,17 +174,28 @@
 
         почта получателя
       </div>
-      <div>
-        3.Телефон<br />
-
-        Имя
-      </div>
-      <div>
-        4.Комментарий<br />
-        <Comment /> 
+      <div class="col">
+        <div class="d-flex justify-content-start">           
+          <div
+            v-if="
+              $root.orderData.type_order == 'electr' &&
+              Object.keys($root.orderData.productsAdd).length != 0
+            "
+          >
+            <h6>Электронный сертификат</h6>
+            <div v-for="item, index in sertificate" :key="index">
+              <img :src='$baseDir + "/images/variant_image/7/" + item.path' 
+                    @click="$root.orderData.sertSel=index; $root.orderData.priceDelivery = Number(item.price);"/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </transition>
+  <div>
+    Комментарий<br />
+    <Comment /> 
+  </div>
   <div>
     <button v-on:click="ordering()">Подтвердить заказ</button>
   </div>
@@ -221,6 +207,7 @@ import Semail from "@/components/form/s_email.vue";
 import Phone from "@/components/form/phone.vue";
 import Name from "@/components/form/name.vue";
 import Comment from "@/components/form/comment.vue";
+import Date from "@/components/form/date.vue";
 import delivery from "@/assets/delivery/deleveryZone.json";
 
 export default {
@@ -231,20 +218,21 @@ export default {
     Semail,
     Phone,
     Name,
-    Comment
+    Comment,
+    Date
   },
   props: {
     sertificate: Object,
   },
   data() {
     return {
-      delivery: delivery,
-      center: { lat: 59.939096, lng: 30.314121 },
+      delivery: delivery, 
+      center: { lat: 59.96972758369692, lng: 30.315531657449316 },
       markers: [
         {
           position: {
-            lat: 59.939096,
-            lng: 30.314121,
+            lat: 59.96972758369692,
+            lng: 30.315531657449316,
           },
         },
       ],
@@ -275,12 +263,12 @@ export default {
           document.getElementById("addressInput").classList.remove("error")
         }
 
-        if (this.$root.orderData.user_data.delivery_time == ""){
-          document.getElementById("input_delivery_time").classList.add("error")
-          emptyField += 1
-        } else {
-          document.getElementById("input_delivery_time").classList.remove("error")
-        }
+        // if (this.$root.orderData.user_data.delivery_time == ""){
+        //   document.getElementById("input_delivery_time").classList.add("error")
+        //   emptyField += 1
+        // } else {
+        //   document.getElementById("input_delivery_time").classList.remove("error")
+        // }
 
         emptyField += this.$refs.emailDelivery.validation()
         emptyField += this.$refs.phoneDelivery.validation()
@@ -369,17 +357,29 @@ export default {
         this.$root.orderData.productsAdd[event.value]["checked"] = "N";
       }
     },
-    onEnter(event) {
-      event.blur();
-    },
-    setData(event) {
-      this.$root.orderData.user_data[event.name] = event.value;
-    },
   },
 };
 </script>
-<style scoped>
-
+<style lang="scss" scoped>
+.method-delivery{
+  margin-top: 30px;
+  span{
+    background: #EFEFEF;
+    padding:10px 15px;
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  span.active{
+    background: #1CBBB3;
+    color: white;
+  }
+}
+p.h3{
+  padding-right: 0;
+}
+p.h5{
+  margin-top:35px;
+}
 .fadeDelivery-enter-active,
 .fadeDelivery-leave-active {
   transition: opacity .5s linear;

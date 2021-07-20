@@ -1,4 +1,5 @@
 <template>
+<div class='placeholder'>
   <input
     id="addressInput"
     name = "b_address"
@@ -6,12 +7,19 @@
     :value='$root.orderData.user_data.b_address'
     v-on:blur="getMarker($event.target)"
     v-on:keyup.enter="onEnter($event.target)"
+    placeholder = " "
   />
+  <label for="addressInput"> 
+    <span>Адрес</span>  
+    <span class="star">*</span>        
+  </label>
+</div>
   <GMapMap
     :center="center"
     :zoom="9"
+    :options="{streetViewControl: false}"
     map-type-id="roadmap"
-    style="width: 500px; height: 300px"
+    style="width: 100%; height: 300px"
     ref="myMapRef"
   >
     <GMapCluster>
@@ -25,7 +33,7 @@
       />
     </GMapCluster>
   </GMapMap>
-  <p>Зелёный - 300 р. | Жёлтый - 500р.</p>
+  <p class="zone">Стоимость зон: <span class="zone-green">300 ₽</span> <span class="zone-yellow">500 ₽</span></p>
 </template>
 <script>
 export default {
@@ -157,3 +165,29 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .placeholder{
+    width:100%;
+    margin-top: 35px;
+    margin-bottom: 20px;
+  }
+  .placeholder > input{
+    width:100%;
+  }
+  p.zone{
+    margin-top: 10px;
+  }
+  p.zone span{
+    padding: 0 10px;
+    margin: 0 5px;
+    border-radius: 15px;
+  }
+  p.zone span.zone-green{
+    border: 1px solid #1cbbb3;
+    background: rgb(28, 187, 179, .4);
+  }
+  p.zone span.zone-yellow{
+    border: 1px solid #f4de40;
+    background: rgb(244, 222, 64, .4);
+  }
+</style>>

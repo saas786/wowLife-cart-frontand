@@ -19,7 +19,7 @@
                   />
                 </td>
                 <td v-else style="background: #e1e1e1"></td>
-                <td>
+                <td style="padding-top: 18px;">
                   <a :href="$baseDir + item.link" class="title">{{
                     item.product
                   }}</a>
@@ -29,7 +29,7 @@
                     :key="index"
                     class="options-select"
                   >
-                    {{ index }}: {{ option }}
+                    <div v-if="index!='Электронный сертификат'">{{ index }}: {{ option }}</div>
                   </div>
 
                   <div class="number">
@@ -323,6 +323,7 @@ export default {
       border-radius: 50%;
       overflow: hidden;
       box-sizing: border-box;
+      cursor: pointer;
     }
     .type2 {
         width: 25px;

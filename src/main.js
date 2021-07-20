@@ -7,6 +7,7 @@ import "bootstrap";
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Maska from 'maska'
+import VCalendar from 'v-calendar';
 
 //import VueCookies from 'vue3-cookies'
 
@@ -19,6 +20,7 @@ app.config.globalProperties.$baseDir = 'https://wanderfull.ru';//process.env.NOD
 
 app.use(VueAxios, axios)
 app.use(Maska);
+app.use(VCalendar, {})
 //app.use(VueCookies)
 
 app.use(VueGoogleMaps, {

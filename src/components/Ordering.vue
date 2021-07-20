@@ -53,6 +53,42 @@
     </span>
     <span @click="selOrderElectr"> Электронный сертификат </span>
   </div>
+  <div class="col">
+    <div class="d-flex justify-content-start">
+      <div>
+        <h6>Дополнительные услуги</h6>
+        <div
+          v-if="
+            $root.orderData.type_order == 'fiz' &&
+            Object.keys($root.orderData.productsAdd).length != 0
+          "
+        >
+          <p v-for="item in $root.orderData.productsAdd" :key="item.id">
+            <input
+              type="checkbox"
+              :value="item.id"
+              v-on:click="checkAdditional($event.target)"
+              :checked="item.checked == 'Y' ? true : false"
+            />
+
+            {{ item.title }} {{ item.price }} 
+          </p>
+        </div>
+      </div>             
+      <div
+        v-if="
+          $root.orderData.type_order == 'electr' &&
+          Object.keys($root.orderData.productsAdd).length != 0
+        "
+      >
+        <h6>Электронный сертификат</h6>
+        <div v-for="item, index in sertificate" :key="index">
+          <img :src='$baseDir + "/images/variant_image/7/" + item.path' 
+                @click="$root.orderData.sertSel=index; $root.orderData.priceDelivery = Number(item.price);"/>
+        </div>
+      </div>
+    </div>
+  </div>
   <transition name="fadeDelivery">
     <div
       v-if="
@@ -346,6 +382,13 @@ export default {
       }
       this.$root.orderData.delivery = "electr";
       this.$root.orderData.type_order = "electr";
+    },
+    checkAdditional(event) {
+      if (event.checked === true) {
+        this.$root.orderData.productsAdd[event.value]["checked"] = "Y";
+      } else {
+        this.$root.orderData.productsAdd[event.value]["checked"] = "N";
+      }
     },
     onEnter(event) {
       event.blur();

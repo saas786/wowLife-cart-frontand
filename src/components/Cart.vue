@@ -1,159 +1,103 @@
 <template>
-  <div id='cart' class="container">
+  <div id="cart" class="container">
     <div v-if="Object.keys($root.orderData.products).length != 0" class="row">
-      <!-- <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            aria-current="page"
-            href="#"
-            v-on:click="$root.orderData.type_order = 'fiz'"
-            :class="[$root.orderData.type_order == 'fiz' ? 'active' : '']"
-          >
-            Физический
-          </a>
-        </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            href="#"
-            v-on:click="$root.orderData.type_order = 'electr'"
-            :class="[$root.orderData.type_order != 'fiz' ? 'active' : '']"
-          >
-            Электронный
-          </a>
-        </li>
-      </ul> -->
-      <div class="col-6">
-        <table class="table">
-          <!-- <thead>
-            <tr>
-              <th scope="col">Товар</th>
-              <th scope="col"></th>
-              <th scope="col"></th>
-              <th scope="col">Опции</th>
-              <th scope="col">Цена</th>
-              <th scope="col"></th>
-            </tr>
-          </thead> -->
-          <tbody>
-            <tr v-for="item, index in $root.orderData.products" :key="index">
-              <th scope="row" v-if="item.main_pair"><img :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"/></th>
-              <td>
-                {{ item.product }}
-                <div class="number">
-                  <input
-                    type="number"
-                    min="1"
-                    :value="item.amount"
-                    @click="amountProduct($event.target, index)"
-                    @blur="amountProduct($event.target, index)"
-                  />
-                </div>
-                <a href="#" v-on:click="delFromCart(index)"
-                  >Удалить</a
-                >
-              </td>
-              <td>
-                <div v-for="option, index in item.options_sel" :key="index">
-                  {{index}}: {{option}}
-                </div>
-                {{}}
-                <!-- <div v-if="$root.orderData.type_order == 'electr'">
+      <div class="col-7">
+        <Ordering :sertificate="sertificate" />
+      </div>
+      <div class="col-5" style="position: relative">
+        <div class="list-order">
+          <h5>Ваш заказ</h5>
+          <table class="table">
+            <tbody>
+              <tr
+                v-for="(item, index) in $root.orderData.products"
+                :key="index"
+              >
+                <td v-if="item.main_pair" class="img-product">
                   <img
-                    v-if="item['sertImg']"
-                    :src="$baseDir + '/images/variant_image/7/' + item['sertImg']"
-                    width="100"
+                    :src="`https://wowlife.club/images/${item.main_pair.detailed.relative_path}`"
                   />
-                  <select v-if="sertificate" @change="changeSert($event.target)">
-                    <option
-                      v-for="itemSert in sertificate"
-                      :key="itemSert.variant_id"
-                      :value="item['product_id'] + ':' + itemSert.variant_id"
-                    >
-                      {{ itemSert.title }}
-                    </option>
-                  </select>
-                </div> -->
-              </td>
-              <td v-if="$root.orderData.type_order == 'fiz'">{{ item.amount * item.price }}</td>
-              <td v-else>{{ item.amount * (item.price + $root.orderData.priceDelivery) }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="row">
-          <p>
-            К оплате {{ animatedTotal }}
-          </p>
-          <div class="col">
-            <div class="d-flex justify-content-start">
-              <div>
-                <h6>Дополнительные услуги</h6>
-                <div
-                  v-if="
-                    $root.orderData.type_order == 'fiz' &&
-                    Object.keys($root.orderData.productsAdd).length != 0
-                  "
-                >
-                  <p v-for="item in $root.orderData.productsAdd" :key="item.id">
-                    <input
-                      type="checkbox"
-                      :value="item.id"
-                      v-on:click="checkAdditional($event.target)"
-                      :checked="item.checked == 'Y' ? true : false"
-                    />
+                </td>
+                <td v-else style="background: #e1e1e1"></td>
+                <td>
+                  <a :href="$baseDir + item.link" class="title">{{
+                    item.product
+                  }}</a>
 
-                    {{ item.title }} {{ item.price }} 
-                  </p>
-                </div>
-              </div>             
+                  <div
+                    v-for="(option, index) in item.options_sel"
+                    :key="index"
+                    class="options-select"
+                  >
+                    {{ index }}: {{ option }}
+                  </div>
+
+                  <div class="number">
+                    <span @click="amountProduct('minus', index)" class="amount"
+                      >-</span
+                    >
+                    {{ item.amount }}
+                    <span @click="amountProduct('plus', index)" class="amount"
+                      >+</span
+                    >
+                  </div>
+                  <a href="#" class="btn-delete" v-on:click="delFromCart(index)"
+                    >Удалить</a
+                  >
+                </td>
+                <td class="base-price">
+                  <span v-if="item.priceFull > 0"
+                    >{{ Number(item.priceFull).toLocaleString("ru") }} ₽</span
+                  >
+                </td>
+                <td v-if="$root.orderData.type_order == 'fiz'" class="price">
+                  {{ (item.amount * item.price).toLocaleString("ru") }} ₽
+                </td>
+                <td v-else class="price">
+                  {{
+                    (
+                      item.amount *
+                      (item.price + $root.orderData.priceDelivery)
+                    ).toLocaleString("ru")
+                  }}
+                  ₽
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="row">
+            <transition name="fadeAdd">
               <div
+                class="add-price"
                 v-if="
-                  $root.orderData.type_order == 'electr' &&
-                  Object.keys($root.orderData.productsAdd).length != 0
+                  $root.orderData != 'electr' &&
+                  $root.orderData.priceDelivery > 0
                 "
               >
-                <h6>Электронный сертификат</h6>
-                <div v-for="item, index in sertificate" :key="index">
-                  <img :src='$baseDir + "/images/variant_image/7/" + item.path' 
-                        @click="$root.orderData.sertSel=index; $root.orderData.priceDelivery = Number(item.price);"/>
-                </div>
+                <span>Доставка</span><span></span
+                ><span>{{ $root.orderData.priceDelivery }} ₽</span>
               </div>
-            </div>
+            </transition>
+            <transition name="fadeAdd">
+              <div class="add-price" v-if="additionalPrice > 0">
+                <span>Дополнительные услуги</span><span></span><span>{{additionalPrice}} ₽</span>
+              </div>
+             </transition>
+             <transition name="fadeAdd">
+              <div class="add-price-discount" v-if="discountPrice < 0">
+                <span>Скидка</span><span></span><span>{{discountPrice}} ₽</span>
+              </div>
+            </transition>
+          </div>
+          <div class="row">
+            <input type="text" placeholder="введите промокод" class="promo">
+            <div class="circleBase type2"></div>
+          </div>
+          <div class="row amount-price">
+            <p><span>ИТОГО</span><br> {{ animatedTotal }} ₽</p>
           </div>
         </div>
       </div>
-      <div class="col-6">
-        <Ordering :sertificate = 'sertificate'/>
-      </div>
-      <!-- <div class="row">
-        <div class="col">
-          <div class="d-flex justify-content-end">
-            <div>
-              <p v-if="$root.orderData.type_order == 'fiz'">
-                <input
-                  name="dostavka"
-                  type="radio"
-                  value="1"
-                  v-on:click="$root.orderData.delivery = null"
-                  :checked="$root.orderData.delivery != 'pickup' ? true : false"
-                />
-                Доставка
-              </p>
-              <p v-if="$root.orderData.type_order == 'fiz'">
-                <input
-                  name="dostavka"
-                  type="radio"
-                  value="2"
-                  v-on:click="$root.orderData.delivery = 'pickup'"
-                  :checked="$root.orderData.delivery == 'pickup' ? true : false"
-                />
-                Самовывоз
-              </p>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
     <div class="container" v-else>
       <h2 style="text-align: center">В корзине нет товаров</h2>
@@ -161,16 +105,21 @@
   </div>
   <div class="popup-wrapper" v-if="$root.loader != ''">
     <div class="popup">
-      <div class="spinner-border text-light" style="width: 3rem; height: 3rem; vertical-align: 1rem" role="status">
+      <div
+        class="spinner-border text-light"
+        style="width: 3rem; height: 3rem; vertical-align: 1rem"
+        role="status"
+      >
         <span class="sr-only"></span>
-      </div><br>
-      <span class="text">{{$root.loader}}</span>
+      </div>
+      <br />
+      <span class="text">{{ $root.loader }}</span>
     </div>
   </div>
 </template>
 <script>
 import Ordering from "../components/Ordering.vue";
-import { gsap } from 'gsap';
+import { gsap } from "gsap";
 
 export default {
   name: "Cart",
@@ -182,7 +131,8 @@ export default {
       sertificate: {},
       number: 0,
       tweenedNumber: this.$root.orderData.amount,
-      priceProduct: 0
+      additionalPrice: 0,
+      discountPrice: 0
     };
   },
   mounted() {
@@ -196,7 +146,7 @@ export default {
       .then((response) => {
         if (response.data) {
           response.data.forEach((item) => {
-            if(item["variant_name"] != 'Нет'){
+            if (item["variant_name"] != "Нет") {
               this.sertificate[item["variant_id"]] = {
                 variant_id: item["variant_id"],
                 option_id: item["option_id"],
@@ -205,23 +155,11 @@ export default {
                 price: item["modifier"],
               };
             }
-            // Инициализация сертификата у каждого продукта по умолчанию
-            //  if(index == 0){
-            //   var productIds = Object.keys(this.$root.orderData.products)
-            //   productIds.forEach((productId) =>{
-            //     if (
-            //       "product_options" in this.$root.orderData.products[productId] === false
-            //     ) {
-            //       this.$root.orderData.products[productId]["product_options"] = {};
-            //     }
-
-            //     this.$root.orderData.products[productId].product_options[item["option_id"]] = item["variant_id"]
-            //     this.$root.orderData.products[productId]["sertImg"] = item["path"];
-            //   })
-            // }
           });
         }
       });
+    this.additionalPriceCalc();
+    this.discountPriceCalc();
   },
   methods: {
     delFromCart(product_id) {
@@ -238,54 +176,184 @@ export default {
         .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
         .then();
     },
-    checkAdditional(event) {
-      if (event.checked === true) {
-        this.$root.orderData.productsAdd[event.value]["checked"] = "Y";
-      } else {
-        this.$root.orderData.productsAdd[event.value]["checked"] = "N";
-      }
-    },
     amountProduct(event, id) {
-      if (event.value < 1) {
-        event.value = 1;
+      if (event == "minus") {
+        this.$root.orderData.products[id].amount =
+          this.$root.orderData.products[id].amount - 1;
+        if (this.$root.orderData.products[id].amount < 1) {
+          this.$root.orderData.products[id].amount = 1;
+        }
+      } else {
+        this.$root.orderData.products[id].amount =
+          this.$root.orderData.products[id].amount + 1;
       }
-      this.$root.orderData.products[id].amount = Number(event.value);
     },
-    //changeSert(event) {
-      // let value = event.value.split(":");
-      // let productId = value[0];
-      // let sertId = value[1];
-      // let optionId = this.sertificate[sertId].option_id;
-
-      // if (
-      //   "product_options" in this.$root.orderData.products[productId] ===
-      //   false
-      // ) {
-      //   this.$root.orderData.products[productId]["product_options"] = {};
-      // }
-
-      // this.$root.orderData.products[productId].product_options[optionId] =
-      //   sertId;
-      // this.$root.orderData.products[productId]["sertImg"] =
-      //   this.sertificate[sertId].path;
-    //},
+    additionalPriceCalc(){
+      this.additionalPrice = 0
+      for (let key in this.$root.orderData.productsAdd){
+        if(this.$root.orderData.productsAdd[key].checked == 'Y'){
+          this.additionalPrice += Number(this.$root.orderData.productsAdd[key].price)
+        }
+      }
+    },
+    discountPriceCalc(){
+      this.discountPrice = 0
+      if(this.$root.orderData.delivery == 'electr'){
+        for(let key in this.$root.orderData.products){
+          this.discountPrice += this.$root.orderData.products[key].amount * this.$root.orderData.priceDelivery
+        }
+      }
+    }
   },
   computed: {
     animatedTotal() {
-      return this.tweenedNumber.toFixed(0)
-    },
+      return this.tweenedNumber.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
   },
   watch: {
-    '$root.orderData.amount': function (newVal){
-        gsap.to(this.$data, { duration: 0.5, tweenedNumber:  newVal})
-     },
-  }
+    "$root.orderData.amount": function (newVal) {
+      gsap.to(this.$data, { duration: 0.5, tweenedNumber: newVal });
+      this.additionalPriceCalc()
+      this.discountPriceCalc()
+    }
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-  #cart{
-    img{width: 120px}
+#cart {
+  .list-order {
+    background: #f8f8f8;
+    position: fixed;
+    padding: 45px 35px;
+    tr {
+      border-style: hidden;
+    }
+    .img-product {
+      padding-left: 0;
+
+      img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+    a.title {
+      color: black;
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      text-decoration-line: underline;
+    }
+    .options-select {
+      font-size: 14px;
+    }
+    .number {
+      display: inline-block;
+    }
+    .amount {
+      cursor: pointer;
+      width: 15px;
+      text-align: center;
+      display: inline-block;
+    }
+    a.btn-delete {
+      color: #a7a7a7;
+      text-decoration-line: none;
+      margin-left: 20px;
+    }
+    .base-price {
+      padding-top: 30px;
+      font-size: 16px;
+      text-decoration: line-through;
+      color: #adadad;
+    }
+    .price {
+      padding-left: 0;
+      padding-top: 30px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .add-price {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      padding-top: 15px;
+      span:nth-child(2) {
+        flex: 1 0;
+        border-bottom: 1px dotted #000;
+        height: 1.2em;
+        margin: 0 0.4em;
+      }
+    }
+    .add-price-discount {
+      display: flex;
+      justify-content: space-between;
+      font-size: 16px;
+      padding-top: 15px;
+      color: #1cbbb3;
+      span:nth-child(2) {
+        flex: 1 0;
+        border-bottom: 1px dotted #1cbbb3;
+        height: 1.2em;
+        margin: 0 0.4em;
+      }
+    }
+    .promo{
+      border: 1px solid #1CBBB3;
+      width: 275px;
+      height: 40px;
+      margin-top: 45px;
+      margin-left:10px;
+    }
+    .amount-price{
+      text-align: right;
+      margin-top:10px;
+      p{
+        font-weight: 600;
+        font-size: 35px;
+        span{
+          font-size: 18px;
+          color: #9E9E9E;
+          line-height: 21px;
+        }
+      }
+    }
+    .circleBase {
+      border-radius: 50%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .type2 {
+        width: 25px;
+        height: 25px;
+        top: 52px;
+        left: 250px;
+        background: #E1E1E1;
+        position: absolute;
+    }
+    .type2:before {
+      content:"";
+      position: absolute;
+      right:50%;
+      width:100%;
+      height:100%;
+      border:2px solid white;
+      transform:rotate(45deg) ;
+    }
+    .type2:hover:before {
+      background: #1CBBB3;
+    }
+
   }
+  .fadeAdd-enter-active,
+  .fadeAdd-leave-active {
+    transition: opacity .5s linear;
+  }
+
+  .fadeAdd-enter-from,
+  .fadeAdd-leave-to {
+    opacity: 0;
+  }
+}
 </style>

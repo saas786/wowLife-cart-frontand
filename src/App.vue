@@ -42,6 +42,7 @@ export default {
         console.log('DB'); 
         this.orderData = response.data
         this.loadProducts()
+        //this.loadProductsAdd()
         this.loadPayments()
       }       
     })
@@ -72,7 +73,8 @@ export default {
           s_zipcode: "",
           s_phone: "",
           delivery_time: "",
-          comment: ""
+          comment: "",
+          comment_postcard: ""
         },
         type_order: 'fiz',
         payment:{},
@@ -111,7 +113,8 @@ export default {
               id: item['id'],
               title: item['title'],
               price: item['price'],
-              checked: "N"
+              checked: "N",
+              image: item['img'],
             }
           })
         }
@@ -126,9 +129,11 @@ export default {
       this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
         if(response.data){
           response.data.forEach(item => {
-            this.$root.orderData.payment[item['payment_id']] = {
-              id: item['payment_id'],
-              title: item['payment'],
+            if(item != null){
+              this.$root.orderData.payment[item['payment_id']] = {
+                id: item['payment_id'],
+                title: item['payment'],
+              }
             }
           })
         }

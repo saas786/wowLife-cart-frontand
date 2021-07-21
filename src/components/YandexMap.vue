@@ -174,6 +174,9 @@ export default {
   .placeholder > input{
     width:100%;
   }
+  div.placeholder > label {
+    left: 1.5em;
+  }
   p.zone{
     margin-top: 10px;
   }

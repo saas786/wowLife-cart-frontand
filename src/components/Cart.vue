@@ -79,7 +79,7 @@
               </div>
             </transition>
             <transition name="fadeAdd">
-              <div class="add-price" v-if="additionalPrice > 0">
+              <div class="add-price" v-if="additionalPrice > 0 && $root.orderData.delivery != 'electr'">
                 <span>Дополнительные услуги</span><span></span><span>{{additionalPrice}} ₽</span>
               </div>
              </transition>

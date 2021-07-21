@@ -56,41 +56,8 @@
           <p class="h5">Дата и время доставки</p>
           <Date />
         </div>
-        <div class="row" style="padding-right: 15px;">
-          <p class="h5">Открытка</p>
-          <Postcard />
-        </div>
-        <div
-          class="row addProduct"
-          v-if="
-            $root.orderData.type_order == 'fiz' &&
-            Object.keys($root.orderData.productsAdd).length != 0
-          "
-        >
-          <p class="h5">Добавьте к заказу</p>
-          <div
-            class="col-3"
-            v-for="item in $root.orderData.productsAdd"
-            :key="item.id"
-          >
-            <label :class="{ active: item.checked == 'Y' }">
-              <img :src="$baseDir + '/images/detailed/' + item.image" />
-              <input
-                type="checkbox"
-                :value="item.id"
-                v-on:click="checkAdditional($event.target)"
-                :checked="item.checked == 'Y' ? true : false"
-                v-show="false"
-              />
-
-              <p class="text-bottom">{{ item.title }}</p>
-              <p class="text-bottom" style="font-weight: 600">
-                {{ Number(item.price).toFixed(0) }} ₽
-              </p>
-              <p class="add">+</p>
-            </label>
-          </div>
-        </div>
+        <Postcard />
+        <AddProductions/>
       </div>
     </div>
   </transition>
@@ -100,9 +67,11 @@
         $root.orderData.type_order != 'electr' &&
         $root.orderData.delivery == 'pickup'
       "
+      class="row"
     >
-      <div>
-        Санкт-Петербург, пр Медиков, д. 3
+      <div class="col-1"></div>
+      <div class="col-10">
+        <p style="margin-top:35px;">Санкт-Петербург, пр Медиков, д. 3</p>
         <GMapMap
           :center="center"
           :zoom="13"
@@ -121,65 +90,43 @@
             />
           </GMapCluster>
         </GMapMap>
-      </div>
-      <div>
-        2.Способ оплаты<br />
-        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
-          <input
-            name="oplata"
-            type="radio"
-            @click="$root.orderData.paymentSel = key"
-            :checked="key == $root.orderData.paymentSel"
-          />
-          {{ item.title }}
-        </p>
+        <Postcard />
+        <AddProductions/>
       </div>
     </div>
   </transition>
   <transition name="fadeDelivery">
-    <div v-if="$root.orderData.type_order == 'electr'">
-      <div>
-        1.Способ оплаты<br />
-        <p v-for="(item, key) in $root.orderData.payment" :key="item.id">
-          <input
-            name="oplata"
-            v-if="item.title == 'Банковская карта'"
-            type="radio"
-            @click="$root.orderData.paymentSel = key"
-            :checked="key == $root.orderData.paymentSel"
-          />
-          {{ item.title }}
-        </p>
-      </div>
-      <div>
-        2.Электронная почта<br />
-
-        Ваша почта
-        <Semail ref="semailElectr" />
-
-        почта получателя
-      </div>
-      <div class="col">
-        <div class="d-flex justify-content-start">
+    <div v-if="$root.orderData.type_order == 'electr'" class="row sertificate">
+      <div class="col-1"></div>
+      <div class="col-10">
+          <p class="h5">Выберите дизайн сертификата</p>
           <div
             v-if="
               $root.orderData.type_order == 'electr' &&
               Object.keys($root.orderData.productsAdd).length != 0
             "
+            class="row"
           >
-            <h6>Электронный сертификат</h6>
-            <div v-for="(item, index) in sertificate" :key="index">
-              <img
-                style="width: 50px"
-                :src="$baseDir + '/images/variant_image/7/' + item.path"
-                @click="
-                  $root.orderData.sertSel = index;
-                  $root.orderData.priceDelivery = Number(item.price);
-                "
-              />
+            <div 
+              v-for="(item, index) in sertificate" 
+              :key="index" 
+              class="col-3"
+              
+            >
+              <div :class="{active:$root.orderData.sertSel == index}">
+                <Sertificate :path="$baseDir + '/images/variant_image/7/' + item.path"/>               
+                <button
+                  @click="
+                    $root.orderData.sertSel = index;
+                    $root.orderData.priceDelivery = Number(item.price);
+                  "
+                >
+                  Выбрать</button>
+              </div>
             </div>
           </div>
-        </div>
+
+          <Semail ref="semailElectr" />
       </div>
     </div>
   </transition>
@@ -239,6 +186,8 @@ import Name from "@/components/form/name.vue";
 import Comment from "@/components/form/comment.vue";
 import Date from "@/components/form/date.vue";
 import Postcard from "@/components/form/postcard.vue";
+import AddProductions from "@/components/form/addProductions.vue";
+import Sertificate from "@/components/form/sertImage.vue";
 import delivery from "@/assets/delivery/deleveryZone.json";
 
 export default {
@@ -252,6 +201,8 @@ export default {
     Comment,
     Date,
     Postcard,
+    AddProductions,
+    Sertificate
   },
   props: {
     sertificate: Object,
@@ -360,7 +311,6 @@ export default {
     payments(typePayments) {
       var key = null;
       if (typePayments == "card") {
-        console.log(typePayments);
         for (key in this.$root.orderData.payment) {
           if (
             this.$root.orderData.payment[key].title.includes("Банковская карта")
@@ -406,13 +356,6 @@ export default {
         this.$root.orderData.type_order = "electr";
       }
     },
-    checkAdditional(event) {
-      if (event.checked === true) {
-        this.$root.orderData.productsAdd[event.value]["checked"] = "Y";
-      } else {
-        this.$root.orderData.productsAdd[event.value]["checked"] = "N";
-      }
-    },
   },
 };
 </script>
@@ -435,38 +378,6 @@ p.h3 {
 }
 p.h5 {
   margin-top: 35px;
-}
-.addProduct {
-  label {
-    margin-top: 20px;
-    position: relative;
-  }
-  img {
-    width: 100%;
-    height: 120px;
-  }
-  .active {
-    outline: 2px solid #1cbbb3;
-  }
-  p.text-bottom {
-    margin-top: 0.4rem;
-    margin-bottom: 0;
-  }
-  p.add {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-bottom: 0;
-    background: #c7c7c7;
-    width: 20px;
-    height: 20px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 18px;
-    color: white;
-    font-weight: 600;
-    line-height: 19px;
-  }
 }
 div.pay {
   background: #efefef;
@@ -508,7 +419,26 @@ p.personal-data{
     color: #555555;
   }
 }
-
+div.sertificate{
+  .row{
+    margin-top: 20px;
+    .col-3{
+      position: relative;
+    }
+  }
+  .active{
+    outline: 2px solid #1cbbb3;
+  }
+  button{
+    position: absolute;
+    width: 70%;
+    left: 15%;
+    bottom: 10%;
+    border: none;
+    background: #1cbbb3;
+    color: #fff;
+  }
+}
 .fadeDelivery-enter-active,
 .fadeDelivery-leave-active {
   transition: opacity 0.5s linear;

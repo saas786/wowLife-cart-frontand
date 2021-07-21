@@ -1,17 +1,20 @@
 <template>
-  <div class="col-5">
-    <div class="postcard">
-      <img :src="$baseDir + '/images/logo.svg'" />
+  <div class="row" style="padding-right: 15px;">
+    <p class="h5">Открытка</p>
+    <div class="col-5">
+      <div class="postcard">
+        <img :src="$baseDir + '/images/logo.svg'" />
+      </div>
     </div>
+    <textarea
+      class="col-7 postcard-text"
+      placeholder="Введите текст поздравления"
+      name="comment_postcard"
+      @blur="setData($event.target)"
+      @keyup.enter="onEnter($event.target)"
+      :value='$root.orderData.user_data.comment_postcard'
+    ></textarea>
   </div>
-  <textarea
-    class="col-7 postcard-text"
-    placeholder="Введите текст поздравления"
-    name="comment_postcard"
-    @blur="setData($event.target)"
-    @keyup.enter="onEnter($event.target)"
-    :value='$root.orderData.user_data.comment_postcard'
-  ></textarea>
 </template>
 <script>
 export default {
@@ -27,6 +30,9 @@ export default {
 };
 </script>
 <style scoped>
+.row{
+  margin-top: 35px;
+}
 .postcard {
   display: block;
   background: #1cbbb3;

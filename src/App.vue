@@ -1,5 +1,8 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>    
+  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>
+  <div class="container beta text-danger h6">
+    Это бета-версия нашей новой корзины. В случае ошибок воспользуйтесь стандартной <a :href="$baseDir + '/korzina/'">корзиной</a> 
+  </div>    
   <transition name="fadeLoad">
     <div v-if="$root.orderData" v-show="is_show"> <Cart /></div>
   </transition>
@@ -42,8 +45,8 @@ export default {
         console.log('DB'); 
         this.orderData = response.data
         this.loadProducts()
+        //this.loadPayments()
         //this.loadProductsAdd()
-        this.loadPayments()
       }       
     })
   },
@@ -256,5 +259,14 @@ div.placeholder input:not(:placeholder-shown) ~ label {
 .fadeLoad-enter-from,
 .fadeLoad-leave-to {
   opacity: 0;
+}
+
+.beta{
+  text-align: center;
+  font-weight: 600;
+  border: 2px solid #1cbbb3;
+  background: rgb(28, 187, 179, .4);
+  padding: 10px;
+  margin-bottom: 35px !important;
 }
 </style>

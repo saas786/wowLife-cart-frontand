@@ -57,7 +57,7 @@ export default {
     height: 120px;
   }
   .active {
-    outline: 2px solid #1cbbb3;
+    outline: 2px solid #1cbbb3 !important;
   }
   p.text-bottom {
     margin-top: 0.4rem;
@@ -77,6 +77,7 @@ export default {
     color: white;
     font-weight: 600;
     line-height: 19px;
+    padding: 0 !important;
   }
 }
  </style>

@@ -191,6 +191,9 @@ export default {
 </script>
 
 <style lang="scss">
+.cart-content-grid {
+  min-width: auto !important;
+}
 #cart-vue{
   .error{
   border:1px solid red;

@@ -431,7 +431,7 @@ div.sertificate{
     }
   }
   .active{
-    outline: 2px solid #1cbbb3;
+    outline: 2px solid #1cbbb3 !important;
   }
   button{
     position: absolute;
@@ -444,8 +444,11 @@ div.sertificate{
   }
 }
 #personal-data{
-  display: inline-flex;
+  display: inline-block;
   padding: 0;
+}
+#personal-data{
+  margin: 0 !important;
 }
 .fadeDelivery-enter-active,
 .fadeDelivery-leave-active {

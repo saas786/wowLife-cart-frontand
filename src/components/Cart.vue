@@ -6,7 +6,7 @@
       </div>
       <div class="col-5" style="position: relative">
         <div class="list-order">
-          <h5>Ваш заказ</h5>
+          <p class="h5">Ваш заказ</p>
           <table class="table">
             <tbody>
               <tr
@@ -225,7 +225,8 @@ export default {
 #cart {
   .list-order {
     background: #f8f8f8;
-    position: fixed;
+    position: sticky;
+    top: 0;
     padding: 45px 35px;
     tr {
       border-style: hidden;

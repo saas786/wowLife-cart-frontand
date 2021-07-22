@@ -261,7 +261,6 @@ export default {
       }
 
       if (emptyField == 0) {
-        this.$root.orderData.processOrdering = 'Y'
         this.orderingError = false
         let dataSend = this.$root.orderData;
         if (dataSend.delivery == "pickup") {
@@ -286,40 +285,29 @@ export default {
             delete dataSend.products[key].product_options[optionId]
           }
         }
-
-        /*** Добавляем выбранные дополнительные услуги в заказ ***/
-        if(dataSend.delivery != "electr"){
-          for(let key in dataSend.productsAdd){
-            if(dataSend.productsAdd[key].checked == 'Y'){
-              dataSend.products[key] = {'amount': 1}
+        
+        //На сервере объединяем продукты и выбранные доп услуги
+        let data = {
+          params: {
+            entity: "ordering",
+            data: dataSend,
+          },
+        };
+        this.$root.loader = "Оформление заказа";
+        this.axios
+          .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
+          .then((response) => {
+            console.log("Заказ оформлен!");
+            console.log(response.data);
+            if (response.data.paymentURL) {
+              document.location.href = response.data.paymentURL;
+            } else {
+              document.location.href =
+                this.$baseDir +
+                "/zakaz-uspeshno-oformlen-1?Success=true&OrderId=" +
+                response.data.orderId;
             }
-          }
-        }
-
-        //склеить комментарий и поздравление
-
-
-        // let data = {
-        //   params: {
-        //     entity: "ordering",
-        //     data: dataSend,
-        //   },
-        // };
-        // this.$root.loader = "Оформление заказа";
-        // this.axios
-        //   .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
-        //   .then((response) => {
-        //     console.log("Заказ оформлен!");
-        //     console.log(response.data);
-        //     if (response.data.paymentURL) {
-        //       document.location.href = response.data.paymentURL;
-        //     } else {
-        //       document.location.href =
-        //         this.$baseDir +
-        //         "/zakaz-uspeshno-oformlen-1?Success=true&OrderId=" +
-        //         response.data.orderId;
-        //     }
-        //   });
+          });
       } else {
         this.orderingError = true
       }

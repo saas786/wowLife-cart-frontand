@@ -3,7 +3,6 @@
     name="comment"
     type="text"
     v-on:blur="setData($event.target)"
-    v-on:keyup.enter="onEnter($event.target)"
     :value="$root.orderData.user_data.comment"
     placeholder="Комментарий к заказу"
     ></textarea>
@@ -11,6 +10,11 @@
 <script>
 export default {
     name: "Comment",
+    methods: {
+        setData(event) {
+            this.$root.orderData.user_data[event.name] = event.value;
+        }
+    }
 };
 </script>
 <style scoped>

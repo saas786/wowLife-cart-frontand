@@ -26,7 +26,7 @@
         <p class="text-bottom" style="font-weight: 600">
           {{ Number(item.price).toFixed(0) }} ₽
         </p>
-        <p class="add">+</p>
+        <p class="add"><span v-if="item.checked == 'N'">+</span><span v-else>-</span></p>
       </label>
     </div>
   </div>

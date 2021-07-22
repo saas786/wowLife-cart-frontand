@@ -77,7 +77,7 @@
           :zoom="13"
           :options="{ streetViewControl: false }"
           map-type-id="roadmap"
-          style="width: 500px; height: 300px"
+          style="width: 100%; height: 300px"
         >
           <GMapCluster>
             <GMapMarker
@@ -169,7 +169,7 @@
       <button class="ordering" @click="ordering()">ОФОРМИТЬ ЗАКАЗ</button>
       <div :class="{orderingError:orderingError}" v-show="orderingError">Заполните все необходимые поля</div>
       <p class="personal-data">
-        <input type="checkbox">
+        <span id="personal-data"><input type="checkbox" @click="personalData =! personalData"></span>
         <span >Согласен на <a href="#">обработку персональных данных</a> и <a href="#">правилами пользования
         сертификатом</a></span>
       </p>
@@ -219,7 +219,8 @@ export default {
           },
         },
       ],
-      orderingError: false
+      orderingError: false,
+      personalData: false
     };
   },
   mounted() {
@@ -246,33 +247,21 @@ export default {
         } else {
           document.getElementById("addressInput").classList.remove("error");
         }
-
-        // if (this.$root.orderData.user_data.delivery_time == ""){
-        //   document.getElementById("input_delivery_time").classList.add("error")
-        //   emptyField += 1
-        // } else {
-        //   document.getElementById("input_delivery_time").classList.remove("error")
-        // }
-
-        emptyField += this.$refs.emailDelivery.validation();
-        emptyField += this.$refs.phoneDelivery.validation();
-        emptyField += this.$refs.nameDelivery.validation();
       }
 
-      if (this.$root.orderData.delivery == "pickup") {
-        emptyField += this.$refs.emailPickup.validation();
-        emptyField += this.$refs.phonePickup.validation();
-        emptyField += this.$refs.namePickup.validation();
-      }
+      emptyField += this.$refs.emailDelivery.validation();
+      emptyField += this.$refs.phoneDelivery.validation();
+      emptyField += this.$refs.nameDelivery.validation();
 
-      if (this.$root.orderData.delivery == "electr") {
-        emptyField += this.$refs.emailElectr.validation();
-        emptyField += this.$refs.semailElectr.validation();
-        emptyField += this.$refs.phoneElectr.validation();
-        emptyField += this.$refs.nameElectr.validation();
+      if(this.personalData === false){
+        emptyField += 1;
+        document.getElementById("personal-data").classList.add("error")
+      } else {
+        document.getElementById("personal-data").classList.remove("error")
       }
 
       if (emptyField == 0) {
+        this.$root.orderData.processOrdering = 'Y'
         this.orderingError = false
         let dataSend = this.$root.orderData;
         if (dataSend.delivery == "pickup") {
@@ -281,29 +270,56 @@ export default {
         dataSend["payment_id"] = dataSend.paymentSel;
         dataSend["shipping_id"] = dataSend.delivery;
 
-        //добавить всем товарам сертификат как опцию, если заказ electr
-        //склеить комментарий и поздравление
-        let data = {
-          params: {
-            entity: "ordering",
-            data: dataSend,
-          },
-        };
-        this.$root.loader = "Оформление заказа";
-        this.axios
-          .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
-          .then((response) => {
-            console.log("Заказ оформлен!");
-            console.log(response.data);
-            if (response.data.paymentURL) {
-              document.location.href = response.data.paymentURL;
-            } else {
-              document.location.href =
-                this.$baseDir +
-                "/zakaz-uspeshno-oformlen-1?Success=true&OrderId=" +
-                response.data.orderId;
+        /*** Добавляем всем продуктам вариант сертификата, если выбрана электронная доставка ***/
+        let optionId = 0
+        for(let key in this.sertificate){
+          optionId = this.sertificate[key].option_id
+          break
+        }
+        if(dataSend.delivery == "electr"){
+          console.log(optionId)
+          for(let key in dataSend.products){
+            dataSend.products[key].product_options[optionId] = dataSend.sertSel
+          }
+        } else {
+          for(let key in dataSend.products){
+            delete dataSend.products[key].product_options[optionId]
+          }
+        }
+
+        /*** Добавляем выбранные дополнительные услуги в заказ ***/
+        if(dataSend.delivery != "electr"){
+          for(let key in dataSend.productsAdd){
+            if(dataSend.productsAdd[key].checked == 'Y'){
+              dataSend.products[key] = {'amount': 1}
             }
-          });
+          }
+        }
+
+        //склеить комментарий и поздравление
+
+
+        // let data = {
+        //   params: {
+        //     entity: "ordering",
+        //     data: dataSend,
+        //   },
+        // };
+        // this.$root.loader = "Оформление заказа";
+        // this.axios
+        //   .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
+        //   .then((response) => {
+        //     console.log("Заказ оформлен!");
+        //     console.log(response.data);
+        //     if (response.data.paymentURL) {
+        //       document.location.href = response.data.paymentURL;
+        //     } else {
+        //       document.location.href =
+        //         this.$baseDir +
+        //         "/zakaz-uspeshno-oformlen-1?Success=true&OrderId=" +
+        //         response.data.orderId;
+        //     }
+        //   });
       } else {
         this.orderingError = true
       }
@@ -438,6 +454,10 @@ div.sertificate{
     background: #1cbbb3;
     color: #fff;
   }
+}
+#personal-data{
+  display: inline-flex;
+  padding: 0;
 }
 .fadeDelivery-enter-active,
 .fadeDelivery-leave-active {

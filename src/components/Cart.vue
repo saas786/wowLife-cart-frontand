@@ -1,6 +1,6 @@
 <template>
   <div id="cart" class="container">
-    <div v-if="Object.keys($root.orderData.products).length != 0" class="row">
+    <div v-if="(Object.keys($root.orderData.products).length != 0) && typeof $root.orderData.products === 'object'" class="row">
       <div class="col-7">
         <Ordering :sertificate="sertificate" />
       </div>

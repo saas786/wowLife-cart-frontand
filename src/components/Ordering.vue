@@ -55,9 +55,10 @@
         <div class="row">
           <p class="h5">Дата и время доставки</p>
           <Date />
+          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +100 ₽</p>
         </div>
         <Postcard />
-        <AddProductions/>
+        <AddProductions />
       </div>
     </div>
   </transition>
@@ -71,7 +72,7 @@
     >
       <div class="col-1"></div>
       <div class="col-10">
-        <p style="margin-top:35px;">Санкт-Петербург, пр Медиков, д. 3</p>
+        <p style="margin-top: 35px">Санкт-Петербург, пр Медиков, д. 3</p>
         <GMapMap
           :center="center"
           :zoom="13"
@@ -91,7 +92,7 @@
           </GMapCluster>
         </GMapMap>
         <Postcard />
-        <AddProductions/>
+        <AddProductions />
       </div>
     </div>
   </transition>
@@ -99,34 +100,32 @@
     <div v-if="$root.orderData.type_order == 'electr'" class="row sertificate">
       <div class="col-1"></div>
       <div class="col-10">
-          <p class="h5">Выберите дизайн сертификата</p>
-          <div
-            v-if="
-              $root.orderData.type_order == 'electr' &&
-              Object.keys($root.orderData.productsAdd).length != 0
-            "
-            class="row"
-          >
-            <div 
-              v-for="(item, index) in sertificate" 
-              :key="index" 
-              class="col-3"
-              
-            >
-              <div :class="{active:$root.orderData.sertSel == index}">
-                <Sertificate :path="$baseDir + '/images/variant_image/7/' + item.path"/>               
-                <button
-                  @click="
-                    $root.orderData.sertSel = index;
-                    $root.orderData.priceDelivery = Number(item.price);
-                  "
-                >
-                  Выбрать</button>
-              </div>
+        <p class="h5">Выберите дизайн сертификата</p>
+        <div
+          v-if="
+            $root.orderData.type_order == 'electr' &&
+            Object.keys($root.orderData.productsAdd).length != 0
+          "
+          class="row"
+        >
+          <div v-for="(item, index) in sertificate" :key="index" class="col-3">
+            <div :class="{ active: $root.orderData.sertSel == index }">
+              <Sertificate
+                :path="$baseDir + '/images/variant_image/7/' + item.path"
+              />
+              <button
+                @click="
+                  $root.orderData.sertSel = index;
+                  $root.orderData.priceDelivery = Number(item.price);
+                "
+              >
+                Выбрать
+              </button>
             </div>
           </div>
+        </div>
 
-          <Semail ref="semailElectr" />
+        <Semail ref="semailElectr" />
       </div>
     </div>
   </transition>
@@ -134,7 +133,10 @@
     <p class="h3 col-1">3 /</p>
     <div class="col-11">
       <p class="h3">Оплата</p>
-      <div class="d-flex justify-content-start" v-if="$root.orderData.type_order != 'electr'">
+      <div
+        class="d-flex justify-content-start"
+        v-if="$root.orderData.type_order != 'electr'"
+      >
         <div
           class="pay"
           v-for="(item, key) in $root.orderData.payment"
@@ -146,10 +148,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-start" v-else>
-        <div
-          v-for="(item, key) in $root.orderData.payment"
-          :key="item.id"
-        >
+        <div v-for="(item, key) in $root.orderData.payment" :key="item.id">
           <div
             class="pay"
             :class="{ active: $root.orderData.paymentSel == key }"
@@ -167,11 +166,17 @@
     <div class="col-10">
       <Comment />
       <button class="ordering" @click="ordering()">ОФОРМИТЬ ЗАКАЗ</button>
-      <div :class="{orderingError:orderingError}" v-show="orderingError">Заполните все необходимые поля</div>
+      <div :class="{ orderingError: orderingError }" v-show="orderingError">
+        Заполните все необходимые поля
+      </div>
       <p class="personal-data">
-        <span id="personal-data"><input type="checkbox" @click="personalData =! personalData"></span>
-        <span >Согласен на <a href="#">обработку персональных данных</a> и <a href="#">правилами пользования
-        сертификатом</a></span>
+        <span id="personal-data"
+          ><input type="checkbox" @click="personalData = !personalData"
+        /></span>
+        <span
+          >Согласен на <a href="#">обработку персональных данных</a> и
+          <a href="#">правилами пользования сертификатом</a></span
+        >
       </p>
     </div>
   </div>
@@ -202,7 +207,7 @@ export default {
     Date,
     Postcard,
     AddProductions,
-    Sertificate
+    Sertificate,
   },
   props: {
     sertificate: Object,
@@ -220,15 +225,8 @@ export default {
         },
       ],
       orderingError: false,
-      personalData: false
+      personalData: false,
     };
-  },
-  mounted() {
-    if (this.$root.orderData.type_order == "electr") {
-      this.payments("card");
-    } else {
-      this.payments("nal");
-    }
   },
   methods: {
     ordering: function () {
@@ -253,15 +251,15 @@ export default {
       emptyField += this.$refs.phoneDelivery.validation();
       emptyField += this.$refs.nameDelivery.validation();
 
-      if(this.personalData === false){
+      if (this.personalData === false) {
         emptyField += 1;
-        document.getElementById("personal-data").classList.add("error")
+        document.getElementById("personal-data").classList.add("error");
       } else {
-        document.getElementById("personal-data").classList.remove("error")
+        document.getElementById("personal-data").classList.remove("error");
       }
 
       if (emptyField == 0) {
-        this.orderingError = false
+        this.orderingError = false;
         let dataSend = this.$root.orderData;
         if (dataSend.delivery == "pickup") {
           dataSend.delivery = this.delivery[0].id;
@@ -270,22 +268,22 @@ export default {
         dataSend["shipping_id"] = dataSend.delivery;
 
         /*** Добавляем всем продуктам вариант сертификата, если выбрана электронная доставка ***/
-        let optionId = 0
-        for(let key in this.sertificate){
-          optionId = this.sertificate[key].option_id
-          break
+        let optionId = 0;
+        for (let key in this.sertificate) {
+          optionId = this.sertificate[key].option_id;
+          break;
         }
-        if(dataSend.delivery == "electr"){
-          console.log(optionId)
-          for(let key in dataSend.products){
-            dataSend.products[key].product_options[optionId] = dataSend.sertSel
+        if (dataSend.delivery == "electr") {
+          console.log(optionId);
+          for (let key in dataSend.products) {
+            dataSend.products[key].product_options[optionId] = dataSend.sertSel;
           }
         } else {
-          for(let key in dataSend.products){
-            delete dataSend.products[key].product_options[optionId]
+          for (let key in dataSend.products) {
+            delete dataSend.products[key].product_options[optionId];
           }
         }
-        
+
         //На сервере объединяем продукты и выбранные доп услуги
         let data = {
           params: {
@@ -309,28 +307,7 @@ export default {
             }
           });
       } else {
-        this.orderingError = true
-      }
-    },
-    payments(typePayments) {
-      var key = null;
-      if (typePayments == "card") {
-        for (key in this.$root.orderData.payment) {
-          if (
-            this.$root.orderData.payment[key].title.includes("Банковская карта")
-          ) {
-            this.$root.orderData.paymentSel = key;
-          }
-        }
-      }
-      if (typePayments == "nal") {
-        if (this.$root.orderData.paymentSel == "") {
-          for (key in this.$root.orderData.payment) {
-            if (this.$root.orderData.payment[key].title.includes("Наличными")) {
-              this.$root.orderData.paymentSel = key;
-            }
-          }
-        }
+        this.orderingError = true;
       }
     },
     selDelivery(type) {
@@ -355,9 +332,9 @@ export default {
           );
           break;
         }
-        this.payments("card");
         this.$root.orderData.delivery = "electr";
         this.$root.orderData.type_order = "electr";
+        this.$root.selPayments();
       }
     },
   },
@@ -394,8 +371,8 @@ div.pay.active {
   background: #1cbbb3;
   color: #fff;
 }
-button.ordering{
-  width:100%;
+button.ordering {
+  width: 100%;
   height: 50px;
   background: #1cbbb3;
   color: #fff;
@@ -405,35 +382,35 @@ button.ordering{
   border: none;
   margin-top: 45px;
 }
-.orderingError{
+.orderingError {
   font-weight: 600;
   color: red;
 }
-p.personal-data{
+p.personal-data {
   margin-top: 25px;
-  input{
+  input {
     width: 20px;
-     height: 20px;
+    height: 20px;
   }
-  span{
+  span {
     font-size: 14px;
-    padding-left:15px;
+    padding-left: 15px;
   }
-  a{
+  a {
     color: #555555;
   }
 }
-div.sertificate{
-  .row{
+div.sertificate {
+  .row {
     margin-top: 20px;
-    .col-3{
+    .col-3 {
       position: relative;
     }
   }
-  .active{
+  .active {
     outline: 2px solid #1cbbb3 !important;
   }
-  button{
+  button {
     position: absolute;
     width: 70%;
     left: 15%;
@@ -443,11 +420,11 @@ div.sertificate{
     color: #fff;
   }
 }
-#personal-data{
+#personal-data {
   display: inline-block;
-  padding: 0;
+  padding: 0 2px 2px 2px;
 }
-#personal-data{
+#personal-data input {
   margin: 0 !important;
 }
 .fadeDelivery-enter-active,
@@ -458,5 +435,11 @@ div.sertificate{
 .fadeDelivery-enter-from,
 .fadeDelivery-leave-to {
   opacity: 0;
+}
+
+@media screen and (max-width: 1200px) {
+  .method-delivery span{
+    display:block;
+  }
 }
 </style>

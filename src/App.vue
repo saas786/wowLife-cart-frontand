@@ -1,5 +1,5 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">e4u2s6cd8sv4g5q9s3hi6cf2n3</div>
+  <div id="sessionId" v-if="!$isProduction">8qdcj6uhmvbtu36moho8o72gl3</div>
   <div class="container beta text-danger h6">
     Это бета-версия нашей новой корзины. В случае ошибок воспользуйтесь стандартной <a :href="$baseDir + '/korzina/'">корзиной</a> 
   </div>    
@@ -47,7 +47,8 @@ export default {
         this.loadProducts()
         //this.loadPayments()
         //this.loadProductsAdd()
-      }       
+      }   
+      this.selPayments()   
     })
   },
   methods: {
@@ -138,9 +139,37 @@ export default {
                 title: item['payment'],
               }
             }
+            this.selPayments()
           })
         }
       })
+    },
+    selPayments() {
+      let key = null;
+      let typePayments = "";
+      if (this.$root.orderData.type_order == "electr") {
+        typePayments = "card";
+      } else {
+        if(this.$root.orderData.paymentSel == ''){
+          typePayments = "nal";
+        }
+      }
+      for (key in this.$root.orderData.payment) {        
+        if (
+          this.$root.orderData.payment[key].title.includes(
+            "Банковская карта"
+          ) &&
+          typePayments == "card"
+        ) {
+          this.$root.orderData.paymentSel = key;
+        }
+        if (
+          this.$root.orderData.payment[key].title.includes("Наличными") &&
+          typePayments == "nal"
+        ) {
+          this.$root.orderData.paymentSel = key;
+        }
+      }  
     },
     calcPrice(){
       let amount = 0 

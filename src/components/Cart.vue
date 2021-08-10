@@ -1,10 +1,10 @@
 <template>
   <div id="cart" class="container">
     <div v-if="(Object.keys($root.orderData.products).length != 0) && typeof $root.orderData.products === 'object'" class="row">
-      <div class="col-7">
+      <div class="col-12 order-2 col-xl-7 order-xl-1" style="padding: 0;">
         <Ordering :sertificate="sertificate" />
       </div>
-      <div class="col-5" style="position: relative">
+      <div class="col-12 order-1 col-xl-5 order-xl-2" style="position: relative; padding: 0;">
         <div class="list-order">
           <p class="h5">Ваш заказ</p>
           <table class="table">
@@ -350,12 +350,18 @@ export default {
   }
   .fadeAdd-enter-active,
   .fadeAdd-leave-active {
-    transition: opacity .5s linear;
+    transition: opacity .8s linear;
   }
 
   .fadeAdd-enter-from,
   .fadeAdd-leave-to {
     opacity: 0;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .list-order {
+    position: relative !important;
   }
 }
 </style>

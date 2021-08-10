@@ -1,5 +1,5 @@
 <template>
-  <v-date-picker class="inline-block h-full" v-model="date" mode="dateTime" :timezone="timezone" is24hr color="teal">
+  <v-date-picker class="col-5" v-model="date" color="teal">
     <template v-slot="{ inputValue, togglePopover }">
       <div class="flex items-center">
         <button
@@ -22,15 +22,22 @@
             :value="inputValue"
             class="bg-white text-gray-700 w-full py-1 px-2 appearance-none border rounded-r focus:outline-none focus:border-blue-500"
             readonly
+            @click="togglePopover()"
             />
-            <label for="email"> 
-                <span>Email</span>  
-                <span class="star">*</span>        
-            </label>
         </div>
       </div>
     </template>
   </v-date-picker>
+  <select class="col-6 time">
+   <option>Выберите время</option>
+   <option value="09:00-11:00">09:00 - 11:00</option>
+   <option value="11:00-13:00">11:00 - 13:00</option>
+   <option value="13:00-15:00">13:00 - 15:00</option>
+   <option value="15:00-17:00">15:00 - 17:00</option>
+   <option value="17:00-19:00">17:00 - 19:00</option>
+   <option value="19:00-21:00">19:00 - 21:00</option>
+   <option value="21:00-23:00">21:00 - 23:00</option>
+   </select>
 </template>
 <script>
     export default {
@@ -49,5 +56,15 @@
     }
     button .fill-current{
         fill: #1CBBB3;
+    }
+    input[name='delivery_time']{
+      width: auto;
+    }
+    .time{
+      width: auto;
+      height: 40px;
+      padding: 5px 15px;
+      border: 1px solid #E1E1E1;
+      margin-top:20px;
     }
 </style>

@@ -114,8 +114,8 @@ export default {
   }
   span.zoom{
     position: absolute;
-    bottom: 25%;
-    right: 20%;
+    bottom: 30%;
+    right: 10%;
     width: 20%;
     cursor: pointer;
     background-color: rgba(255, 255, 255, .4);

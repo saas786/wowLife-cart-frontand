@@ -1,5 +1,5 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">8qdcj6uhmvbtu36moho8o72gl3</div>
+  <div id="sessionId" v-if="!$isProduction">ee1435d52c5945930f8b3075ea747041-1-C</div>
   <div class="container beta text-danger h6">
     Это бета-версия нашей новой корзины. В случае ошибок воспользуйтесь стандартной <a :href="$baseDir + '/korzina/'">корзиной</a> 
   </div>    

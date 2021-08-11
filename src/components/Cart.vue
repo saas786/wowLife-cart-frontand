@@ -19,7 +19,7 @@
                   />
                 </td>
                 <td v-else style="background: #e1e1e1"></td>
-                <td style="padding-top: 18px;">
+                <td style="padding-top: 18px; width:50%">
                   <a :href="$baseDir + item.link" class="title">{{
                     item.product
                   }}</a>
@@ -29,7 +29,7 @@
                     :key="index"
                     class="options-select"
                   >
-                    <div v-if="index!='Электронный сертификат'">{{ index }}: {{ option }}</div>
+                    <div v-if="typeof option!== 'object'">{{ index }}: {{ option }} {{  }}</div>
                   </div>
 
                   <div class="number">

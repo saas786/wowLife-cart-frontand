@@ -265,7 +265,7 @@ export default {
     }
     .base-price {
       padding-top: 30px;
-      font-size: 16px;
+      font-size: 14px;
       text-decoration: line-through;
       color: #adadad;
     }
@@ -273,7 +273,7 @@ export default {
       padding-left: 0;
       padding-top: 30px;
       font-weight: 600;
-      font-size: 16px;
+      font-size: 14px;
     }
     .add-price {
       display: flex;

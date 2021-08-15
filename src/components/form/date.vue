@@ -1,5 +1,5 @@
 <template>
-  <v-date-picker class="col-5" v-model="date" color="teal">
+  <v-date-picker class="col-12 col-xl-4" v-model="date" :min-date='new Date()' @dayclick="setTimeDelivery" color="teal">
     <template v-slot="{ inputValue, togglePopover }">
       <div class="flex items-center">
         <button
@@ -28,7 +28,7 @@
       </div>
     </template>
   </v-date-picker>
-  <select class="col-6 time">
+  <select v-model="selectedTime" class="col-12 col-xl-5 time" @change="setTimeDelivery">
    <option>Выберите время</option>
    <option value="09:00-11:00">09:00 - 11:00</option>
    <option value="11:00-13:00">11:00 - 13:00</option>
@@ -44,8 +44,49 @@
         data() {
             return {
                 date: new Date(),
+                selectedTime: 'Выберите время',
                 timezone: '',
             };
+        },
+        mounted(){
+          this.setTimeDelivery()
+        },
+        methods:{
+          setTimeDelivery(){
+            let day = String(this.date.getDate())
+            let month = String(this.date.getMonth() + 1)
+            let year = this.date.getFullYear()
+            if(day.length == 1){
+              day = '0' + day
+            }
+            if(month.length == 1){
+              month = '0' + month
+            }
+
+            this.$root.orderData.user_data.delivery_time = `${day}.${month}.${year}`
+            if(this.selectedTime != 'Выберите время'){
+              this.$root.orderData.user_data.delivery_time = this.$root.orderData.user_data.delivery_time + ' ' + this.selectedTime
+            }
+
+            let addPrice = 100
+            this.$root.orderData.priceDeliveryAdd = 0
+            if(this.$root.orderData.delivery != 'pickup' && this.$root.orderData.delivery != 'electr'){
+              let deliveryDate = this.$root.orderData.user_data.delivery_time.split(' ')[0]
+              let dateParts = deliveryDate.split(".");
+              deliveryDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0])
+              deliveryDate.setHours(0,0,0,0)
+
+              let nowData = new Date()
+              nowData.setHours(0,0,0,0)
+              
+              if(deliveryDate.toString() === nowData.toString()){
+                this.$root.orderData.priceDeliveryAdd = addPrice
+                this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + addPrice
+              } else {
+                this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone
+              }
+            }
+          }
         }
     };
 </script>
@@ -58,7 +99,10 @@
         fill: #1CBBB3;
     }
     input[name='delivery_time']{
-      width: auto;
+      width: 100%;
+    }
+    .placeholder{
+      width:70%;
     }
     .time{
       width: auto;

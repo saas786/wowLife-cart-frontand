@@ -80,7 +80,8 @@ export default {
 
           this.deliveryZone[item.zone].addListener("click", (mapsMouseEvent) => {
             this.$root.orderData.delivery = item.id;
-            this.$root.orderData.priceDelivery = item.price;
+            this.$root.orderData.priceDeliveryZone = item.price
+            this.$root.orderData.priceDelivery = item.price + this.$root.orderData.priceDeliveryAdd
             this.$root.orderData.user_data.b_city = item.type;
             this.$root.orderData.user_data.b_state = item.type;
             this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
@@ -143,7 +144,8 @@ export default {
                 )
               ) {
                 this.$root.orderData.delivery = this.deliveryZone[key].deliveryId;
-                this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice;
+                this.$root.orderData.priceDeliveryZone = this.deliveryZone[key].deliveryPrice
+                this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice + this.$root.orderData.priceDeliveryAdd
                 this.$root.orderData.user_data.b_city = this.deliveryZone[key].deliveryType;
                 this.$root.orderData.user_data.b_state = this.deliveryZone[key].deliveryType;
 

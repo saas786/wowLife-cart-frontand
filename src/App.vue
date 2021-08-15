@@ -85,19 +85,21 @@ export default {
         paymentSel: 0,
         delivery: null,
         priceDelivery: 0,
+        priceDeliveryZone: 0,
+        priceDeliveryAdd: 0,
         amount: 0,
         sertSel: 0
       }
     },
     loadProducts(){
       let params = {
-        params: {
-          entity: 'carts',
-          sessionId: this.sessionId
-        }
+        entity: 'carts',
+        sessionId: this.sessionId
       }; 
-      
-      this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+      let headers = {
+        'Cache-Control': 'no-cache'
+      }
+      this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, {params: params, headers: headers}).then((response) => {
         if(response.data){
           this.$root.orderData.products = response.data
         }

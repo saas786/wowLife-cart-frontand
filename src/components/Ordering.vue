@@ -49,13 +49,14 @@
     >
       <div class="col-1"></div>
       <div class="col-10">
+        <DeleveryAddressee />
         <div class="row">
           <YandexMap :delivery="delivery" />
         </div>
         <div class="row">
           <p class="h5">Дата и время доставки</p>
           <Date />
-          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +100 ₽</p>
+          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽</p>
         </div>
         <Postcard />
         <AddProductions />
@@ -183,6 +184,7 @@
   <div></div>
 </template>
 <script>
+import DeleveryAddressee from "@/components/form/deleveryAddressee.vue";
 import YandexMap from "@/components/YandexMap.vue";
 import Email from "@/components/form/email.vue";
 import Semail from "@/components/form/s_email.vue";
@@ -198,6 +200,7 @@ import delivery from "@/assets/delivery/deleveryZone.json";
 export default {
   name: "Ordering",
   components: {
+    DeleveryAddressee,
     YandexMap,
     Email,
     Semail,

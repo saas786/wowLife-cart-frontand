@@ -1,7 +1,7 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">ee1435d52c5945930f8b3075ea747041-1-C</div>
+  <div id="sessionId" v-if="!$isProduction">8qdcj6uhmvbtu36moho8o72gl3</div>
   <div class="container beta text-danger h6">
-    Это бета-версия нашей новой корзины. В случае ошибок воспользуйтесь стандартной <a :href="$baseDir + '/korzina/'">корзиной</a> 
+    Это бета-версия нашей новой корзины. В случае ошибок воспользуйтесь стандартной <a :href="$baseDir + '/korzina/?old=y'">корзиной</a> 
   </div>    
   <transition name="fadeLoad">
     <div v-if="$root.orderData" v-show="is_show"> <Cart /></div>
@@ -42,13 +42,12 @@ export default {
         this.loadProductsAdd()
         this.loadPayments()
       } else {
-        console.log('DB'); 
+        console.log('DB');
         this.orderData = response.data
         this.loadProducts()
         //this.loadPayments()
         //this.loadProductsAdd()
       }   
-      this.selPayments()   
     })
   },
   methods: {
@@ -80,6 +79,9 @@ export default {
           comment: "",
           comment_postcard: ""
         },
+        subtotal_discount: 0,
+        promotions: {},
+        promotion_ids: "",
         type_order: 'fiz',
         payment:{},
         paymentSel: 0,
@@ -197,6 +199,24 @@ export default {
       } else {
         amount += this.$root.orderData.priceDelivery * total_count
       }
+
+      //**********Promotion**************
+      for(key in this.$root.orderData.promotions){
+        let type = this.$root.orderData.promotions[key]['bonuses'][0]['discount_bonus']
+        let value = this.$root.orderData.promotions[key]['bonuses'][0]['discount_value']
+        if(type == 'by_percentage'){
+          this.$root.orderData.subtotal_discount = Math.round(amount * Number(value) / 100)
+        }
+        if(type == 'by_fixed'){
+          this.$root.orderData.subtotal_discount = Number(value)
+        }
+        amount -= this.$root.orderData.subtotal_discount
+      }
+
+      if(amount < 0){
+        amount = 0
+      }
+
       this.$root.orderData.amount = amount
     }
   },

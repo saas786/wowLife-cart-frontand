@@ -68,7 +68,7 @@
               this.$root.orderData.user_data.delivery_time = this.$root.orderData.user_data.delivery_time + ' ' + this.selectedTime
             }
 
-            let addPrice = 100
+            let addPrice = 150
             this.$root.orderData.priceDeliveryAdd = 0
             if(this.$root.orderData.delivery != 'pickup' && this.$root.orderData.delivery != 'electr'){
               let deliveryDate = this.$root.orderData.user_data.delivery_time.split(' ')[0]

@@ -29,7 +29,7 @@
                     :key="index"
                     class="options-select"
                   >
-                    <div v-if="typeof option!== 'object'">{{ index }}: {{ option }} {{  }}</div>
+                    <div v-if="typeof option!== 'object' && index != 'Электронный сертификат' && index != 'Аренда GoPro'">{{ index }}: {{ option }} {{  }}</div>
                   </div>
 
                   <div class="number">
@@ -45,15 +45,20 @@
                     >Удалить</a
                   >
                 </td>
-                <td class="base-price">
-                  <span v-if="item.priceFull > 0"
-                    >{{ Number(item.priceFull).toLocaleString("ru") }} ₽</span
-                  >
-                </td>
                 <td v-if="$root.orderData.type_order == 'fiz'" class="price">
+                  <div class="base-price">
+                    <span v-if="item.priceFull > 0"
+                      >{{ Number(item.priceFull).toLocaleString("ru") }} ₽</span
+                    >
+                  </div>
                   {{ (item.amount * item.price).toLocaleString("ru") }} ₽
                 </td>
                 <td v-else class="price">
+                  <div class="base-price">
+                    <span v-if="item.priceFull > 0"
+                      >{{ Number(item.priceFull).toLocaleString("ru") }} ₽</span
+                    >
+                  </div>
                   {{
                     (
                       item.amount *
@@ -89,10 +94,7 @@
               </div>
             </transition>
           </div>
-          <div class="row" style="position: relative;">
-            <input type="text" placeholder="введите промокод" class="promo">
-            <div class="circleBase type2"></div>
-          </div>
+          <Promotions/>
           <div class="row amount-price">
             <p><span>ИТОГО</span><br> {{ animatedTotal }} ₽</p>
           </div>
@@ -119,12 +121,14 @@
 </template>
 <script>
 import Ordering from "../components/Ordering.vue";
+import Promotions from "../components/Promotions.vue";
 import { gsap } from "gsap";
 
 export default {
   name: "Cart",
   components: {
     Ordering,
+    Promotions
   },
   data() {
     return {
@@ -203,6 +207,7 @@ export default {
           this.discountPrice += this.$root.orderData.products[key].amount * this.$root.orderData.priceDelivery
         }
       }
+      this.discountPrice -= this.$root.orderData.subtotal_discount
     }
   },
   computed: {
@@ -264,16 +269,18 @@ export default {
       margin-left: 20px;
     }
     .base-price {
-      padding-top: 30px;
+      text-align: right;
+      padding-top: 0px;
       font-size: 14px;
       text-decoration: line-through;
       color: #adadad;
     }
     .price {
+      text-align: right;
       padding-left: 0;
-      padding-top: 30px;
+      padding-top: 20px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 16px;
     }
     .add-price {
       display: flex;
@@ -300,13 +307,6 @@ export default {
         margin: 0 0.4em;
       }
     }
-    .promo{
-      border: 1px solid #1CBBB3;
-      width: 275px;
-      height: 40px;
-      margin-top: 45px;
-      margin-left:10px;
-    }
     .amount-price{
       text-align: right;
       margin-top:10px;
@@ -320,33 +320,6 @@ export default {
         }
       }
     }
-    .circleBase {
-      border-radius: 50%;
-      overflow: hidden;
-      box-sizing: border-box;
-      cursor: pointer;
-    }
-    .type2 {
-        width: 25px;
-        height: 25px;
-        top: 52px;
-        left: 250px;
-        background: #E1E1E1;
-        position: absolute;
-    }
-    .type2:before {
-      content:"";
-      position: absolute;
-      right:50%;
-      width:100%;
-      height:100%;
-      border:2px solid white;
-      transform:rotate(45deg) ;
-    }
-    .type2:hover:before {
-      background: #1CBBB3;
-    }
-
   }
   .fadeAdd-enter-active,
   .fadeAdd-leave-active {

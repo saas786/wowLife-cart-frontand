@@ -58,8 +58,8 @@
           <Date />
           <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽</p>
         </div>
-        <Postcard />
-        <AddProductions />
+        <Postcard v-if="false"/>
+        <AddProductions v-if="false"/>
       </div>
     </div>
   </transition>
@@ -92,8 +92,8 @@
             />
           </GMapCluster>
         </GMapMap>
-        <Postcard />
-        <AddProductions />
+        <Postcard  v-if="false"/>
+        <AddProductions  v-if="false"/>
       </div>
     </div>
   </transition>
@@ -125,8 +125,9 @@
             </div>
           </div>
         </div>
+        <Semail ref="semailElectr" v-if="false"/>
 
-        <Semail ref="semailElectr" />
+        <p style="padding: 10px 0 0 0; margin: 0;font-size: 14px;">*Придет в течение 2 минут после оплаты</p>
       </div>
     </div>
   </transition>
@@ -264,12 +265,13 @@ export default {
       if (emptyField == 0) {
         this.orderingError = false;
         let dataSend = this.$root.orderData;
-        if (dataSend.delivery == "pickup") {
-          dataSend.delivery = this.delivery[0].id;
-        }
+
         dataSend["payment_id"] = dataSend.paymentSel;
         dataSend["shipping_id"] = dataSend.delivery;
 
+        if (dataSend.delivery == "pickup") {
+          dataSend["shipping_id"] = this.delivery[0].id;
+        }
         /*** Добавляем всем продуктам вариант сертификата, если выбрана электронная доставка ***/
         let optionId = 0;
         for (let key in this.sertificate) {
@@ -321,6 +323,7 @@ export default {
       if (type == "pickup") {
         this.$root.orderData.delivery = "pickup";
         this.$root.orderData.priceDelivery = 0;
+        this.$root.orderData.priceDeliveryAdd = 0
         this.$root.orderData.type_order = "fiz";
         this.$root.orderData.user_data.b_address =
           "Санкт-Петербург, пр Медиков, д. 3";
@@ -337,6 +340,7 @@ export default {
         }
         this.$root.orderData.delivery = "electr";
         this.$root.orderData.type_order = "electr";
+        this.$root.orderData.priceDeliveryAdd = 0;
         this.$root.selPayments();
       }
     },

@@ -33,7 +33,8 @@
       />
     </GMapCluster>
   </GMapMap>
-  <p class="zone">Стоимость зон: <span class="zone-green">300 ₽</span> <span class="zone-yellow">500 ₽</span></p>
+  <p class="zone">Стоимость зон: <span class="zone-green">300 ₽</span> <span class="zone-yellow">500 ₽</span>
+  <br><span class="zone-text">*В остальных случаях стоимость расчитывается менеджером после заказа</span></p>
 </template>
 <script>
 export default {
@@ -81,7 +82,12 @@ export default {
           this.deliveryZone[item.zone].addListener("click", (mapsMouseEvent) => {
             this.$root.orderData.delivery = item.id;
             this.$root.orderData.priceDeliveryZone = item.price
-            this.$root.orderData.priceDelivery = item.price + this.$root.orderData.priceDeliveryAdd
+            if(item.price == 0){
+              this.$root.orderData.priceDelivery = 0
+              this.$root.orderData.priceDeliveryAdd = 0
+            } else{
+              this.$root.orderData.priceDelivery = item.price + this.$root.orderData.priceDeliveryAdd
+            }
             this.$root.orderData.user_data.b_city = item.type;
             this.$root.orderData.user_data.b_state = item.type;
             this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
@@ -145,7 +151,12 @@ export default {
               ) {
                 this.$root.orderData.delivery = this.deliveryZone[key].deliveryId;
                 this.$root.orderData.priceDeliveryZone = this.deliveryZone[key].deliveryPrice
-                this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice + this.$root.orderData.priceDeliveryAdd
+                if(this.$root.orderData.priceDeliveryZone == 0){
+                  this.$root.orderData.priceDelivery = 0
+                  this.$root.orderData.priceDeliveryAdd = 0
+                } else{
+                  this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice + this.$root.orderData.priceDeliveryAdd
+                }
                 this.$root.orderData.user_data.b_city = this.deliveryZone[key].deliveryType;
                 this.$root.orderData.user_data.b_state = this.deliveryZone[key].deliveryType;
 
@@ -195,4 +206,9 @@ export default {
     border: 1px solid #f4de40;
     background: rgb(244, 222, 64, .4);
   }
-</style>>
+  p.zone span.zone-text{
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+  }
+</style>

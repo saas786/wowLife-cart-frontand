@@ -30,7 +30,6 @@
   </v-date-picker>
   <select v-model="selectedTime" class="col-12 col-xl-5 time" @change="setTimeDelivery">
    <option>Выберите время</option>
-   <option value="09:00-11:00">09:00 - 11:00</option>
    <option value="11:00-13:00">11:00 - 13:00</option>
    <option value="13:00-15:00">13:00 - 15:00</option>
    <option value="15:00-17:00">15:00 - 17:00</option>
@@ -68,8 +67,6 @@
               this.$root.orderData.user_data.delivery_time = this.$root.orderData.user_data.delivery_time + ' ' + this.selectedTime
             }
 
-            let addPrice = 150
-            this.$root.orderData.priceDeliveryAdd = 0
             if(this.$root.orderData.delivery != 'pickup' && this.$root.orderData.delivery != 'electr'){
               let deliveryDate = this.$root.orderData.user_data.delivery_time.split(' ')[0]
               let dateParts = deliveryDate.split(".");
@@ -80,11 +77,18 @@
               nowData.setHours(0,0,0,0)
               
               if(deliveryDate.toString() === nowData.toString()){
-                this.$root.orderData.priceDeliveryAdd = addPrice
-                this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + addPrice
+                this.$root.orderData.priceDeliveryAdd = 150
+                if(this.$root.orderData.priceDeliveryZone == 0){
+                  this.$root.orderData.priceDelivery = 0
+                } else {
+                  this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + this.$root.orderData.priceDeliveryAdd
+                }
               } else {
+                this.$root.orderData.priceDeliveryAdd = 0
                 this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone
               }
+            } else {
+              this.$root.orderData.priceDeliveryAdd = 0
             }
           }
         }

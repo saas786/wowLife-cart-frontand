@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <p class="h3 col-1">1 /</p>
+    <p class="h3 col-1">1 <span class="slash">/</span></p>
     <div class="col-11">
       <p class="h3">Оформление заказа</p>
       <Name ref="nameDelivery" />
@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row" style="margin-top: 80px">
-    <p class="h3 col-1">2 /</p>
+    <p class="h3 col-1">2 <span class="slash">/</span></p>
     <div class="col-11">
       <p class="h3">Способ получения</p>
       <div class="method-delivery">
@@ -58,7 +58,7 @@
           <Date />
           <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽</p>
         </div>
-        <Postcard v-if="false"/>
+        <Postcard />
         <AddProductions v-if="false"/>
       </div>
     </div>
@@ -92,7 +92,7 @@
             />
           </GMapCluster>
         </GMapMap>
-        <Postcard  v-if="false"/>
+        <Postcard />
         <AddProductions  v-if="false"/>
       </div>
     </div>
@@ -109,7 +109,7 @@
           "
           class="row"
         >
-          <div v-for="(item, index) in sertificate" :key="index" class="col-3">
+          <div v-for="(item, index) in sertificate" :key="index" class="col-6 col-xl-3">
             <div :class="{ active: $root.orderData.sertSel == index }">
               <Sertificate
                 :path="$baseDir + '/images/variant_image/7/' + item.path"
@@ -125,14 +125,16 @@
             </div>
           </div>
         </div>
-        <Semail ref="semailElectr" v-if="false"/>
+        <Semail ref="semailElectr"/>
 
         <p style="padding: 10px 0 0 0; margin: 0;font-size: 14px;">*Придет в течение 2 минут после оплаты</p>
+
+        <Postcard />
       </div>
     </div>
   </transition>
   <div class="row" style="margin-top: 80px">
-    <p class="h3 col-1">3 /</p>
+    <p class="h3 col-1">3 <span class="slash">/</span></p>
     <div class="col-11">
       <p class="h3">Оплата</p>
       <div
@@ -279,7 +281,7 @@ export default {
           break;
         }
         if (dataSend.delivery == "electr") {
-          console.log(optionId);
+          dataSend["shipping_id"] = this.delivery[1].id;
           for (let key in dataSend.products) {
             dataSend.products[key].product_options[optionId] = dataSend.sertSel;
           }
@@ -289,6 +291,10 @@ export default {
           }
         }
 
+        //Получаем клиент id для Яндекс метрики
+        let match = document.cookie.match('(?:^|;)\\s*_ym_uid=([^;]*)');
+        this.$root.orderData.ymId = (match) ? decodeURIComponent(match[1]) : false;
+        console.log(this.$root.orderData.ymID)
         //На сервере объединяем продукты и выбранные доп услуги
         let data = {
           params: {
@@ -410,7 +416,7 @@ p.personal-data {
 div.sertificate {
   .row {
     margin-top: 20px;
-    .col-3 {
+    .col-6, .col-xl-3{
       position: relative;
     }
   }
@@ -447,6 +453,9 @@ div.sertificate {
 @media screen and (max-width: 1200px) {
   .method-delivery span{
     display:block;
+  }
+  span.slash{
+    display: none
   }
 }
 </style>

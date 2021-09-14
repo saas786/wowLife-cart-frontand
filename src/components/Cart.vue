@@ -168,16 +168,8 @@ export default {
   methods: {
     delFromCart(product_id) {
       delete this.$root.orderData.products[product_id];
-
-      let params = {
-        params: {
-          entity: "delete",
-          sessionId: this.$root.sessionId,
-          product_id: product_id,
-        },
-      };
       this.axios
-        .get(`${this.$baseDir}/cart/custom-rest/index.php`, params)
+        .get(`${this.$baseDir}/index.php?dispatch=checkout.delete&cart_id=${product_id}&redirect_mode=cart`)
         .then();
     },
     amountProduct(event, id) {

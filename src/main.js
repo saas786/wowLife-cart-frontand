@@ -16,7 +16,7 @@ import VueGoogleMaps from '@fawmi/vue-google-maps'
 const app = createApp(App)
 
 app.config.globalProperties.$isProduction = process.env.NODE_ENV === 'production'
-app.config.globalProperties.$baseDir = 'https://wowlife.club';//process.env.NODE_ENV === 'development' ? 'https://wanderfull.ru' : 'https://wowlife.club'; 
+app.config.globalProperties.$baseDir = 'https://wanderfull.ru';//process.env.NODE_ENV === 'development' ? 'https://wanderfull.ru' : 'https://wowlife.club'; 
 
 app.use(VueAxios, axios)
 app.use(Maska);

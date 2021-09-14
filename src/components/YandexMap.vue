@@ -1,4 +1,5 @@
 <template>
+<p class="address">Введидете адрес или выберите на карте</p>
 <div class='placeholder'>
   <input
     id="addressInput"
@@ -179,9 +180,12 @@ export default {
 };
 </script>
 <style scoped>
+  p.address{
+    margin-top: 35px;
+  }
   .placeholder{
     width:100%;
-    margin-top: 35px;
+    margin-top: 0px;
     margin-bottom: 20px;
   }
   .placeholder > input{

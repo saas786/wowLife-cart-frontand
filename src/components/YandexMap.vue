@@ -34,7 +34,7 @@
       />
     </GMapCluster>
   </GMapMap>
-  <p class="zone">Стоимость зон: <span class="zone-green">300 ₽</span> <span class="zone-yellow">500 ₽</span>
+  <p class="zone">Стоимость зон: <span class="zone-green">Бесплатно</span> <span class="zone-yellow">500 ₽</span>
   <br><span class="zone-text">*В остальных случаях стоимость расчитывается менеджером после заказа</span></p>
 </template>
 <script>

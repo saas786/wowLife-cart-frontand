@@ -56,7 +56,7 @@
         <div class="row">
           <p class="h5">Дата и время доставки</p>
           <Date />
-          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽</p>
+          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽ (Только до 16:00)</p>
         </div>
         <Postcard />
         <AddProductions v-if="false"/>
@@ -109,7 +109,7 @@
           "
           class="row"
         >
-          <div v-for="(item, index) in sertificate" :key="index" class="col-6 col-xl-3">
+          <div v-for="(item, index) in sertificate" :key="index" class="col-6 col-xl-3" style="margin-bottom: 20px;">
             <div :class="{ active: $root.orderData.sertSel == index }">
               <Sertificate
                 :path="$baseDir + '/images/variant_image/7/' + item.path"

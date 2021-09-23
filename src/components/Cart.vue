@@ -80,7 +80,7 @@
                 "
               >
                 <span>Доставка</span><span></span
-                ><span>{{ $root.orderData.priceDelivery }} ₽</span>
+                ><span>{{ Math.round($root.orderData.priceDelivery) }} ₽</span>
               </div>
             </transition>
             <transition name="fadeAdd">

@@ -8,25 +8,20 @@
     </div>
     <textarea
       class="col-7 postcard-text"
+      maxlength="100"
       placeholder="Введите текст поздравления"
       name="comment_postcard"
-      @blur="setData($event.target)"
-      @keyup.enter="onEnter($event.target)"
-      :value='$root.orderData.user_data.comment_postcard'
+      v-model='$root.orderData.user_data.comment_postcard'
     ></textarea>
+  </div>
+  <div class="row" style="margin-top: 5px;">
+    <div class="col-5"></div>
+    <div class="col-7" style="padding-left: 0; color: gray">Количество символо: {{100 - $root.orderData.user_data.comment_postcard.length}}</div>
   </div>
 </template>
 <script>
 export default {
     name: "Postcard",
-    methods: {
-        onEnter(event) {
-            event.blur();
-        },
-        setData(event) {
-            this.$root.orderData.user_data[event.name] = event.value
-        },
-    }
 };
 </script>
 <style scoped>

@@ -1,8 +1,8 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">o9hld5sfdmdrbe9m0fpe1bfba4</div>
-  <div class="container beta text-danger h6">
+  <div id="sessionId" v-if="!$isProduction">ee1435d52c5945930f8b3075ea747041-1-C</div>
+  <!--<div class="container beta text-danger h6">
     Старая версия корзины находится <a :href="$baseDir + '/korzina/?old=y'">здесь</a> 
-  </div>    
+  </div>-->    
   <transition name="fadeLoad">
     <div v-if="$root.orderData" v-show="is_show"> <Cart /></div>
   </transition>

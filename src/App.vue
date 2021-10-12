@@ -1,5 +1,5 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">ee1435d52c5945930f8b3075ea747041-1-C</div>
+  <div id="sessionId" v-if="!$isProduction">cd5bb983ad0dd48af716ee536091d6c3</div>
   <!--<div class="container beta text-danger h6">
     Старая версия корзины находится <a :href="$baseDir + '/korzina/?old=y'">здесь</a> 
   </div>-->    
@@ -10,6 +10,7 @@
 
 <script>
 import Cart from './components/Cart.vue'
+import delivery from "@/assets/delivery/deleveryZone.json";
 
 export default {
   name: 'Apps',
@@ -18,6 +19,7 @@ export default {
   },
   data(){
     return {
+      delivery: delivery,
       orderData: null,
       sessionId: '',
       is_show: false,
@@ -219,24 +221,70 @@ export default {
       }
 
       this.$root.orderData.amount = amount
+    },
+    calcDelivery(deliveryId, deliveryPriceZone){
+      let freePrice = 5500
+      let priceDeliveryAdd = this.delivery[6].price //Сколько добавлять в день заказа
+      let deliverySpbId = this.delivery[2].id
+
+      let amount = 0 
+      for (let key in this.$root.orderData.products) {
+        amount += this.$root.orderData.products[key].amount * this.$root.orderData.products[key].price
+      }
+
+      if( this.$root.orderData.delivery != 'pickup' && this.$root.orderData.delivery != 'electr'){
+
+        this.$root.orderData.delivery = deliveryId
+        this.$root.orderData.priceDeliveryZone = deliveryPriceZone
+
+        let deliveryDate = this.$root.orderData.user_data.delivery_time.split(' ')[0]
+        let dateParts = deliveryDate.split(".");
+        deliveryDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0])
+        deliveryDate.setHours(0,0,0,0)
+
+        let nowData = new Date()
+        nowData.setHours(0,0,0,0)
+        
+        //Доставка в день заказа
+        if( (deliveryDate.toString() === nowData.toString()) && (deliveryPriceZone > 0) ){
+          this.$root.orderData.priceDeliveryAdd = priceDeliveryAdd 
+        } else {
+          this.$root.orderData.priceDeliveryAdd = 0
+        }
+        //Бесплатная доставка
+        if(amount >= freePrice && this.$root.orderData.delivery == deliverySpbId){
+          this.$root.orderData.priceDelivery = -1
+        } else {
+          this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + this.$root.orderData.priceDeliveryAdd
+        }
+      } else {
+        this.$root.orderData.priceDelivery = 0
+      }
     }
   },
   watch: {
     orderData: {
       handler: function(val) {
-        let params = {
-          params: {
-            entity: 'cartInfoSave',
-            sessionId: this.sessionId,
-            data: val
-          }
-        }; 
-        this.axios.get(`${this.$baseDir}/cart/custom-rest/index.php`, params).then((response) => {
+        // let params = {
+        //   params: {
+        //     entity: 'cartInfoSave',
+        //     sessionId: this.sessionId,
+        //     data: val
+        //   }
+        // }; 
+        let data = new FormData();
+        data.append('entity','cartInfoSave');
+        data.append('sessionId',this.sessionId);
+        data.append('data',JSON.stringify(val));
+        this.axios.post(`${this.$baseDir}/cart/custom-rest/index.php`, data).then((response) => {
           console.log('save: ' + response.data)
         })
         this.calcPrice() // Функция пересчёта общей стоимости
       },
       deep: true
+    },
+    "orderData.amount": function () {
+      this.calcDelivery(this.$root.orderData.delivery, this.$root.orderData.priceDeliveryZone)
     }
   },
 }

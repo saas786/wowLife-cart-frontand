@@ -28,7 +28,21 @@
       </div>
     </template>
   </v-date-picker>
-  <select v-model="selectedTime" class="col-12 col-xl-5 time time-from" @change="setTimeDelivery">
+  <select v-if="new Date().toDateString() == date.toDateString()" v-model="selectedTime" class="col-12 col-xl-5 time time-from" @change="setTimeDelivery">
+   <option>С</option>
+   <option value="10:30">10:30</option>
+   <option value="11:00">11:00</option>
+   <option value="11:30">11:30</option>
+   <option value="12:00">12:00</option>
+   <option value="12:30">12:30</option>
+   <option value="13:00">13:00</option>
+   <option value="13:30">13:30</option>
+   <option value="14:00">14:00</option>
+   <option value="14:30">14:30</option>
+   <option value="15:00">15:00</option>
+   <option value="15:30">15:30</option>
+  </select>
+  <select v-else v-model="selectedTime" class="col-12 col-xl-5 time time-from" @change="setTimeDelivery">
    <option>С</option>
    <option value="10:30">10:30</option>
    <option value="11:00">11:00</option>
@@ -55,8 +69,22 @@
    <option value="21:30">21:30</option>
    <option value="22:00">22:00</option>
    <option value="22:30">22:30</option>
-   </select>
-  <select v-model="selectedTimeTo" class="col-12 col-xl-5 time" @change="setTimeDelivery">
+  </select>
+  <select v-if="new Date().toDateString() == date.toDateString()" v-model="selectedTimeTo" class="col-12 col-xl-5 time" @change="setTimeDelivery">
+   <option>До</option>
+   <option value="11:00">11:00</option>
+   <option value="11:30">11:30</option>
+   <option value="12:00">12:00</option>
+   <option value="12:30">12:30</option>
+   <option value="13:00">13:00</option>
+   <option value="13:30">13:30</option>
+   <option value="14:00">14:00</option>
+   <option value="14:30">14:30</option>
+   <option value="15:00">15:00</option>
+   <option value="15:30">15:30</option>
+   <option value="16:00">16:00</option>
+  </select>
+  <select v-else v-model="selectedTimeTo" class="col-12 col-xl-5 time" @change="setTimeDelivery">
    <option>До</option>
    <option value="11:00">11:00</option>
    <option value="11:30">11:30</option>
@@ -115,29 +143,7 @@
               this.$root.orderData.user_data.delivery_time = this.$root.orderData.user_data.delivery_time + ' ' + this.selectedTime + ' - ' + this.selectedTimeTo
             }
 
-            if(this.$root.orderData.delivery != 'pickup' && this.$root.orderData.delivery != 'electr'){
-              let deliveryDate = this.$root.orderData.user_data.delivery_time.split(' ')[0]
-              let dateParts = deliveryDate.split(".");
-              deliveryDate = new Date(dateParts[2], dateParts[1] - 1, dateParts[0])
-              deliveryDate.setHours(0,0,0,0)
-
-              let nowData = new Date()
-              nowData.setHours(0,0,0,0)
-              
-              if(deliveryDate.toString() === nowData.toString()){
-                this.$root.orderData.priceDeliveryAdd = 150
-                if(this.$root.orderData.priceDeliveryZone == 0){
-                  this.$root.orderData.priceDelivery = 0
-                } else {
-                  this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + this.$root.orderData.priceDeliveryAdd
-                }
-              } else {
-                this.$root.orderData.priceDeliveryAdd = 0
-                this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone
-              }
-            } else {
-              this.$root.orderData.priceDeliveryAdd = 0
-            }
+            this.$root.calcDelivery(this.$root.orderData.delivery, this.$root.orderData.priceDeliveryZone)
           }
         }
     };

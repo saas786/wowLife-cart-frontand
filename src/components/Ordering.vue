@@ -51,7 +51,7 @@
       <div class="col-10">
         <DeleveryAddressee />
         <div class="row">
-          <YandexMap :delivery="delivery" />
+          <YandexMap />
         </div>
         <div class="row">
           <p class="h5">Дата и время доставки</p>
@@ -109,7 +109,7 @@
           "
           class="row"
         >
-          <div v-for="(item, index) in sertificate" :key="index" class="col-6 col-xl-3" style="margin-bottom: 20px;">
+          <div v-for="(item, index) in sertificate" :key="index" class="col-12 col-md-6 col-xl-3" style="margin-bottom: 20px;">
             <div :class="{ active: $root.orderData.sertSel == index }">
               <Sertificate
                 :path="$baseDir + '/images/variant_image/7/' + item.path"
@@ -198,7 +198,6 @@ import Date from "@/components/form/date.vue";
 import Postcard from "@/components/form/postcard.vue";
 import AddProductions from "@/components/form/addProductions.vue";
 import Sertificate from "@/components/form/sertImage.vue";
-import delivery from "@/assets/delivery/deleveryZone.json";
 
 export default {
   name: "Ordering",
@@ -220,7 +219,6 @@ export default {
   },
   data() {
     return {
-      delivery: delivery,
       center: { lat: 59.96972758369692, lng: 30.315531657449316 },
       markers: [
         {
@@ -272,7 +270,11 @@ export default {
         dataSend["shipping_id"] = dataSend.delivery;
 
         if (dataSend.delivery == "pickup") {
-          dataSend["shipping_id"] = this.delivery[0].id;
+          dataSend["shipping_id"] = this.$root.delivery[0].id;
+        }
+
+        if(dataSend.delivery != "pickup" && dataSend.delivery != "electr" && dataSend.priceDelivery == -1){
+          dataSend["shipping_id"] = this.$root.delivery[5].id;
         }
         /*** Добавляем всем продуктам вариант сертификата, если выбрана электронная доставка ***/
         let optionId = 0;
@@ -281,7 +283,7 @@ export default {
           break;
         }
         if (dataSend.delivery == "electr") {
-          dataSend["shipping_id"] = this.delivery[1].id;
+          dataSend["shipping_id"] = this.$root.delivery[1].id;
           for (let key in dataSend.products) {
             dataSend.products[key].product_options[optionId] = dataSend.sertSel;
           }
@@ -296,15 +298,18 @@ export default {
         this.$root.orderData.ymId = (match) ? decodeURIComponent(match[1]) : false;
         console.log(this.$root.orderData.ymID)
         //На сервере объединяем продукты и выбранные доп услуги
-        let data = {
-          params: {
-            entity: "ordering",
-            data: dataSend,
-          },
-        };
+        // let data = {
+        //   params: {
+        //     entity: "ordering",
+        //     data: dataSend,
+        //   },
+        // }
+        let data = new FormData();
+        data.append('entity','ordering');
+        data.append('data',JSON.stringify(dataSend));
         this.$root.loader = "Оформление заказа";
         this.axios
-          .get(`${this.$baseDir}/cart/custom-rest/index.php`, data)
+          .post(`${this.$baseDir}/cart/custom-rest/index.php`, data)
           .then((response) => {
             console.log("Заказ оформлен!");
             console.log(response.data);

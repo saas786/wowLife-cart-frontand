@@ -1,5 +1,5 @@
 <template>
-<p class="address">Введидете адрес или выберите на карте</p>
+<p class="address">Введите адрес или выберите на карте</p>
 <div class='placeholder'>
   <input
     id="addressInput"
@@ -34,15 +34,15 @@
       />
     </GMapCluster>
   </GMapMap>
-  <p class="zone">Стоимость зон: <span class="zone-green">Бесплатно</span> <span class="zone-yellow">500 ₽</span>
+  <p class="zone">Стоимость зон: 
+    <span class="zone-green" v-if="$root.orderData.amount < 5500">{{$root.delivery[2].price}} ₽</span> 
+    <span class="zone-green" v-else>Бесплатно</span> 
+    <span class="zone-yellow">{{$root.delivery[3].price}} ₽</span>
   <br><span class="zone-text">*В остальных случаях стоимость расчитывается менеджером после заказа</span></p>
 </template>
 <script>
 export default {
   name: "YandexMap",
-  props:{
-    delivery: Array
-  },
   data() {
     return {
       center: { lat: 59.939096, lng: 30.314121 },
@@ -64,7 +64,7 @@ export default {
     this.$refs.myMapRef.$mapPromise.then((map) => {
       const geocoder = new window.google.maps.Geocoder();
       const infowindow = new window.google.maps.InfoWindow();
-      this.delivery.forEach(item=>{
+      this.$root.delivery.forEach(item=>{
         if(item.paths){
           let area = item.paths
           this.deliveryZone[item.zone] = new window.google.maps.Polygon({
@@ -81,14 +81,9 @@ export default {
           this.deliveryZone[item.zone].setMap(map)
 
           this.deliveryZone[item.zone].addListener("click", (mapsMouseEvent) => {
-            this.$root.orderData.delivery = item.id;
-            this.$root.orderData.priceDeliveryZone = item.price
-            if(item.price == 0){
-              this.$root.orderData.priceDelivery = 0
-              this.$root.orderData.priceDeliveryAdd = 0
-            } else{
-              this.$root.orderData.priceDelivery = item.price + this.$root.orderData.priceDeliveryAdd
-            }
+
+            this.$root.calcDelivery(item.id, item.price)
+            
             this.$root.orderData.user_data.b_city = item.type;
             this.$root.orderData.user_data.b_state = item.type;
             this.geocodeLatLng(map, geocoder, infowindow, mapsMouseEvent.latLng);
@@ -150,14 +145,9 @@ export default {
                   this.deliveryZone[key]
                 )
               ) {
-                this.$root.orderData.delivery = this.deliveryZone[key].deliveryId;
-                this.$root.orderData.priceDeliveryZone = this.deliveryZone[key].deliveryPrice
-                if(this.$root.orderData.priceDeliveryZone == 0){
-                  this.$root.orderData.priceDelivery = 0
-                  this.$root.orderData.priceDeliveryAdd = 0
-                } else{
-                  this.$root.orderData.priceDelivery = this.deliveryZone[key].deliveryPrice + this.$root.orderData.priceDeliveryAdd
-                }
+
+                this.$root.calcDelivery(this.deliveryZone[key].deliveryId, this.deliveryZone[key].deliveryPrice)
+
                 this.$root.orderData.user_data.b_city = this.deliveryZone[key].deliveryType;
                 this.$root.orderData.user_data.b_state = this.deliveryZone[key].deliveryType;
 
@@ -176,6 +166,19 @@ export default {
         })
       });
     },
+    deliveryFree(){
+      let amount = 0 
+      let key = 0
+      for (key in this.$root.orderData.products) {
+        amount += this.$root.orderData.products[key].amount * this.$root.orderData.products[key].price
+      }
+      if (amount >= 5500){
+        this.$root.orderData.delivery = 'free'
+        this.$root.orderData.priceDelivery = 0
+        this.$root.orderData.priceDeliveryAdd = 0
+        console.log(amount)
+      }
+    }
   },
 };
 </script>

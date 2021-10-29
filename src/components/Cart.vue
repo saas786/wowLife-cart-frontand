@@ -93,6 +93,11 @@
                 <span>Скидка</span><span></span><span>{{discountPrice}} ₽</span>
               </div>
             </transition>
+            <transition name="fadeAdd">
+              <div class="add-price-discount" v-if="$root.orderData.amount > 7000">
+                <span>WOW-впечатления</span><span></span><span>В подарок</span>
+              </div>
+            </transition>
           </div>
           <Promotions/>
           <div class="row amount-price">

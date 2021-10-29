@@ -193,14 +193,13 @@ export default {
             }
         }
       }
-
       if(this.$root.orderData.type_order != 'electr'){
         // console.log(priceDelivery)
         // console.log(countProducts)
         // priceDelivery = priceDelivery * countProducts
         amount += this.$root.orderData.priceDelivery
       } else {
-        amount += this.$root.orderData.priceDelivery * total_count
+        amount += this.delivery[1].price * total_count
       }
 
       //**********Promotion**************
@@ -253,7 +252,7 @@ export default {
         }
         //Бесплатная доставка
         if(amount >= freePrice && this.$root.orderData.delivery == deliverySpbId){
-          this.$root.orderData.priceDelivery = -1
+          this.$root.orderData.priceDelivery = -0.01
         } else {
           this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + this.$root.orderData.priceDeliveryAdd
         }

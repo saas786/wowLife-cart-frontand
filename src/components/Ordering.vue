@@ -273,9 +273,17 @@ export default {
           dataSend["shipping_id"] = this.$root.delivery[0].id;
         }
 
-        if(dataSend.delivery != "pickup" && dataSend.delivery != "electr" && dataSend.priceDelivery == -1){
+        /*** Акция бесплатная доставка от 5500 ***/
+        if(dataSend.delivery != "pickup" && dataSend.delivery != "electr" && dataSend.priceDelivery == -0.01){
           dataSend["shipping_id"] = this.$root.delivery[5].id;
+          this.$root.orderData.priceDeliveryAdd = 0
         }
+
+        /*** Акция wow сертификат от 7000 ***/
+        // if(dataSend.amount >= 7000){
+        //   dataSend.products[755] = {'amount': '1', 'price':'0'}
+        // }
+
         /*** Добавляем всем продуктам вариант сертификата, если выбрана электронная доставка ***/
         let optionId = 0;
         for (let key in this.sertificate) {
@@ -340,6 +348,7 @@ export default {
           "Санкт-Петербург, пр Медиков, д. 3";
       }
       if (type == "electr") {
+        console.log(this.sertificate)
         for (let key in this.sertificate) {
           if (this.$root.orderData.sertSel == "") {
             this.$root.orderData.sertSel = this.sertificate[key].variant_id;

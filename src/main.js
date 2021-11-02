@@ -9,7 +9,7 @@ import VueAxios from 'vue-axios'
 import Maska from 'maska'
 import VCalendar from 'v-calendar';
 
-//import VueCookies from 'vue3-cookies'
+import VueCookies from 'vue3-cookies'
 
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 
@@ -21,7 +21,7 @@ app.config.globalProperties.$baseDir = 'https://wowlife.club';//process.env.NODE
 app.use(VueAxios, axios)
 app.use(Maska);
 app.use(VCalendar, {})
-//app.use(VueCookies)
+app.use(VueCookies)
 
 app.use(VueGoogleMaps, {
     load: {

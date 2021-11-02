@@ -1,5 +1,6 @@
 <template>
   <div id="sessionId" v-if="!$isProduction">cd5bb983ad0dd48af716ee536091d6c3</div>
+  <div id="ym_clientID"  v-if="!$isProduction" style="display:none">1622037250838155208</div>
   <!--<div class="container beta text-danger h6">
     Старая версия корзины находится <a :href="$baseDir + '/korzina/?old=y'">здесь</a> 
   </div>-->    
@@ -93,7 +94,8 @@ export default {
         priceDeliveryAdd: 0,
         amount: 0,
         sertSel: 0,
-        ymId:""
+        ymId:"",
+        utm_source: ""
       }
     },
     loadProducts(){

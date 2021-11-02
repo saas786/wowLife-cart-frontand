@@ -302,9 +302,14 @@ export default {
         }
 
         //Получаем клиент id для Яндекс метрики
-        let match = document.cookie.match('(?:^|;)\\s*_ym_uid=([^;]*)');
-        this.$root.orderData.ymId = (match) ? decodeURIComponent(match[1]) : false;
+        this.$root.orderData.ymId = this.$cookies.get('_ym_uid')
         console.log(this.$root.orderData.ymID)
+
+        this.$root.orderData.utm_source = this.$cookies.get('utm_source')
+        this.$root.orderData.utm_campaign = this.$cookies.get('utm_campaign')
+        console.log(this.$root.orderData.utm_source)
+        console.log(this.$root.orderData.utm_campaign)
+
         //На сервере объединяем продукты и выбранные доп услуги
         // let data = {
         //   params: {

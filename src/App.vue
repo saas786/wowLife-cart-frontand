@@ -1,11 +1,26 @@
 <template>
   <div id="sessionId" v-if="!$isProduction">cd5bb983ad0dd48af716ee536091d6c3</div>
   <div id="ym_clientID"  v-if="!$isProduction" style="display:none">1622037250838155208</div>
+  <span class="ty-minicart-title ty-hand" v-if="!$isProduction">
+    <span class="ty-block">
+      <span itemprop="price"><span>2980</span>&nbsp;<span class="ty-rub">руб.</span></span>
+    </span>
+  </span>
   <!--<div class="container beta text-danger h6">
     Старая версия корзины находится <a :href="$baseDir + '/korzina/?old=y'">здесь</a> 
   </div>-->    
   <transition name="fadeLoad">
     <div v-if="$root.orderData" v-show="is_show"> <Cart /></div>
+  </transition>
+  <transition name="fadeLoad">
+    <div class="toast align-items-center text-white border-0" :class="{ show: pushShow}" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{pushText}}
+        </div>
+        <button @click="this.pushShow = false" type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
   </transition>
 </template>
 
@@ -25,6 +40,9 @@ export default {
       sessionId: '',
       is_show: false,
       loader: '',
+      pushShow: false,
+      pushText: '',
+      pushCount: 0
     }
   },
   mounted() {
@@ -222,6 +240,24 @@ export default {
       }
 
       this.$root.orderData.amount = amount
+
+      let cartPrice = document.getElementsByClassName('ty-minicart-title')
+      cartPrice[0].innerHTML = '<span class="ty-block"><span itemprop="price"><span>'+this.$root.orderData.amount+'</span>&nbsp;<span class="ty-rub">руб.</span></span></span>'
+
+
+      if(this.$root.orderData.amount >= 3000
+        && this.$root.orderData.amount < 5500
+         && this.pushCount <= 1){
+          this.pushText = "Бесплатная доставка по городу при заказе от 5500 рублей"
+          this.pushCount = this.pushCount + 1
+          setTimeout(() => this.pushShow = true, 5000)
+      }else if(this.$root.orderData.amount >= 5500
+        && this.$root.orderData.amount < 7000
+         && this.pushCount <= 1){
+          this.pushText = "При заказе от 7000 рублей вы получите в подарок электронный сертификат WOW-впечатления."
+          this.pushCount = this.pushCount + 1
+          setTimeout(() => this.pushShow = true, 5000)
+      }
     },
     calcDelivery(deliveryId, deliveryPriceZone){
       let freePrice = 5500
@@ -372,5 +408,11 @@ div.placeholder input:not(:placeholder-shown) ~ label {
   background: rgb(28, 187, 179, .4);
   padding: 10px;
   margin-bottom: 35px !important;
+}
+.toast{
+  position: fixed;
+  bottom: 50px;
+  right: 8%;
+  background-color: rgba(28,187,179,.85) !important;
 }
 </style>

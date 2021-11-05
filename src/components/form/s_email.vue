@@ -34,7 +34,13 @@ export default {
       event.blur();
     },
     setData(event) {
-      this.$root.orderData.user_data[event.name] = event.value;
+        let reg = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        if (reg.test(event.value) === true) {
+            this.$root.orderData.user_data[event.name] = event.value
+        } else {
+            event.value = ''
+            this.$root.orderData.user_data[event.name] = ''
+        }
     },
     validation() {
       if (this.$root.orderData.user_data.s_email == "") {

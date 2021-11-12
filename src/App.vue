@@ -411,8 +411,11 @@ div.placeholder input:not(:placeholder-shown) ~ label {
 }
 .toast{
   position: fixed;
-  bottom: 50px;
+  top: 50px;
   right: 8%;
   background-color: rgba(28,187,179,.85) !important;
+}
+.toast-body{
+  color: #fff;
 }
 </style>

@@ -56,7 +56,7 @@
         <div class="row">
           <p class="h5">Дата и время доставки</p>
           <Date />
-          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽ (Только до 16:00)</p>
+          <p class="my-2"><span style="color: #1cbbb3">*</span> Доставка в день заказа +150 ₽ (Заказы принимаются до 16:00)</p>
         </div>
         <Postcard />
         <AddProductions v-if="false"/>
@@ -276,7 +276,6 @@ export default {
         /*** Акция бесплатная доставка от 5500 ***/
         if(dataSend.delivery != "pickup" && dataSend.delivery != "electr" && dataSend.priceDelivery == -0.01){
           dataSend["shipping_id"] = this.$root.delivery[5].id;
-          this.$root.orderData.priceDeliveryAdd = 0
         }
 
         /*** Акция wow сертификат от 7000 ***/
@@ -307,8 +306,9 @@ export default {
 
         this.$root.orderData.utm_source = this.$cookies.get('utm_source')
         this.$root.orderData.utm_campaign = this.$cookies.get('utm_campaign')
-        console.log(this.$root.orderData.utm_source)
-        console.log(this.$root.orderData.utm_campaign)
+        this.$root.orderData.utm_content = this.$cookies.get('utm_content')
+        this.$root.orderData.utm_term = this.$cookies.get('utm_term')
+        this.$root.orderData.utm_medium = this.$cookies.get('utm_medium')
 
         //На сервере объединяем продукты и выбранные доп услуги
         // let data = {

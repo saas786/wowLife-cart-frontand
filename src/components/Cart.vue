@@ -84,6 +84,19 @@
               </div>
             </transition>
             <transition name="fadeAdd">
+              <div
+                class="add-price"
+                v-if="
+                  $root.orderData != 'electr' &&
+                  $root.orderData != 'pickup' &&
+                  $root.orderData.priceDeliveryAdd > 0
+                "
+              >
+                <span>Доставка в день заказа</span><span></span
+                ><span>{{ Math.round($root.orderData.priceDeliveryAdd) }} ₽</span>
+              </div>
+            </transition>
+            <transition name="fadeAdd">
               <div class="add-price" v-if="additionalPrice > 0 && $root.orderData.delivery != 'electr'">
                 <span>Дополнительные услуги</span><span></span><span>{{additionalPrice}} ₽</span>
               </div>

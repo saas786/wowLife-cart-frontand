@@ -1,5 +1,5 @@
 <template>
-  <div id="sessionId" v-if="!$isProduction">cd5bb983ad0dd48af716ee536091d6c3</div>
+  <div id="sessionId" v-if="!$isProduction">214fcaf9c86b0a8632c64a2551356221</div>
   <div id="ym_clientID"  v-if="!$isProduction" style="display:none">1622037250838155208</div>
   <span class="ty-minicart-title ty-hand" v-if="!$isProduction">
     <span class="ty-block">
@@ -15,7 +15,7 @@
   <transition name="fadeLoad">
     <div class="toast align-items-center text-white border-0" :class="{ show: pushShow}" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
-        <div class="toast-body">
+        <div class="toast-body" style="color:#fff;">
           {{pushText}}
         </div>
         <button @click="this.pushShow = false" type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -218,6 +218,9 @@ export default {
         // console.log(countProducts)
         // priceDelivery = priceDelivery * countProducts
         amount += this.$root.orderData.priceDelivery
+        if(this.$root.orderData.type_order != 'pickup'){
+          amount += this.$root.orderData.priceDeliveryAdd
+        }
       } else {
         amount += this.delivery[1].price * total_count
       }
@@ -242,7 +245,7 @@ export default {
       this.$root.orderData.amount = amount
 
       let cartPrice = document.getElementsByClassName('ty-minicart-title')
-      cartPrice[0].innerHTML = '<span class="ty-block"><span itemprop="price"><span>'+this.$root.orderData.amount+'</span>&nbsp;<span class="ty-rub">руб.</span></span></span>'
+      cartPrice[0].innerHTML = '<span class="ty-block"><span itemprop="price"><span>'+Math.round(this.$root.orderData.amount)+'</span>&nbsp;<span class="ty-rub">руб.</span></span></span>'
 
 
       if(this.$root.orderData.amount >= 3000
@@ -292,7 +295,7 @@ export default {
         if(amount >= freePrice && this.$root.orderData.delivery == deliverySpbId){
           this.$root.orderData.priceDelivery = -0.01
         } else {
-          this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone + this.$root.orderData.priceDeliveryAdd
+          this.$root.orderData.priceDelivery = this.$root.orderData.priceDeliveryZone
         }
       } else {
         this.$root.orderData.priceDelivery = 0
